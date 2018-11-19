@@ -1,9 +1,9 @@
 # CSCI 2113.11 - Fall 2018 Project 2 (100 pts) - Due December 6 at 11:59PM
 
 
-## Name: [Your Name]
+## Name: Ryan Steed
 
-## GWID: [GWID]
+## GWID: G49358053
 
 ## Instructions
 
@@ -13,7 +13,15 @@ Note: The Project 2 requirements may change during the development of the projec
 
 ## Comments and Notes
 
-[Filled in by student.]
+Problem with repainting on interval - what if multiple inputs withinn the interval?
+
+- Why not repaint components separately, on command? e.g. player only repaints on input, other game objects repaint on interval
+> Because then it will be impossible to accurately assess collisions
+- Could pause main interval in favor of local interval
+
+How to assess collisions? Keep game objects in sorted data structure, for quick querying?
+
+`SwingUtilities.invokeLater`
 
 ## Grading Rubric
 

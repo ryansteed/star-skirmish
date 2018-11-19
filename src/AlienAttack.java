@@ -1,7 +1,7 @@
 /**
  * CSCI 2113 - Project 2 - Alien Attack
  * 
- * @author [Fill this out]
+ * @author Ryan Steed
  *
  */
 
