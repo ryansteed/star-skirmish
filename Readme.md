@@ -20,19 +20,19 @@ Build:
 <!-- - Implement game controller skeleton, holding a list of gameobjects -->
 <!-- - Implement black background (board) based on exercise 8, leaving room for a score -->
 <!-- - Build a basic player by modifying game piece from exercise 8 - start with a blue square -->
-- Build basic aliens based on GameObject abstract - start with a green square
-- Package aliens into waves
-- Create automatic alien movement with PhysicsEngine, instantiate with waves (of a certain speed)
-- Create more waves of aliens moving at increasing speeds
+<!-- - Build basic aliens based on GameObject abstract - start with a green square -->
+<!-- - Package aliens into waves -->
+<!-- - Create automatic alien movement with PhysicsEngine, instantiate with waves (of a certain speed) -->
 - Create user-controlled motion for player with PhysicsEngine
+- Add boundaries to user motion
 - Display a score - +1 for every alien passed
 - Add collisions & count lives beside score 
     - use rectangle contact boxes - then .intersect is handy for comparing positions
     - checking collisions, try the quadrant method here https://gamedev.stackexchange.com/questions/46745/what-is-the-best-way-to-check-lists-of-objects-that-collide
+- Create more waves of aliens moving at increasing speeds
 - Design player appearance
 - Design alien appearance
 - Add stars
-- Build a player missile
 
 Finalize:
 - Javadoc annotations
@@ -41,6 +41,7 @@ Finalize:
 - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
 
 Bonus:
+- Build a player missile
 - Bonus features
 
 ### Class Notes 19Nov18

@@ -31,9 +31,14 @@ public class AlienAttackFrame extends JFrame
    }
 
    protected void update(ArrayList<GameObject> objects) {
+      stage.removeAll();
+
       for (GameObject object : objects) {
-         System.out.println("Attempting to add " + object);
+         // System.out.println("Add " + object);
+         object.update();
          stage.add(object);
       }
+      // System.out.println("AlienAttackFrame:38> Calling repaint");
+      this.repaint();
    }
 }
