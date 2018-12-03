@@ -106,9 +106,9 @@ public class AlienAttack
 
    public void startGame() {
       score = 0;
-      //TODO: make these lives into player copies in the bottom right
       player.lives = Integer.valueOf(prop.getProperty("plives"));
       // first wave
+      // TODO: make these parameters into properties
       currentWave = new Wave(5, 3);
       animationTimer.start();
    }
@@ -141,24 +141,17 @@ public class AlienAttack
    }
 
    private void checkCollisions() {
-      // Iterator iter = aliens.iterator();
-      // while (iter.hasNext()) {
-      //    Alien current = (Alien) iter.next();
-      //    // if alien past screen, delete and add points
-      //    if (currerlaynt.engine.getY() > AlienAttack.yBound) {
-      //       score += current.value;
-      //       numCleared += 1;
-      //       // System.out.println("AlienAttack:164> Removing alien due to out of bounds");
-      //       iter.remove();
-      //    }
-      // }
-
-      // TODO: for each life lost, remove a life image and reduce player size
       int collisions = currentWave.checkCollisions();
       for (int i=0; i<collisions; i++) {
+         try {
+            int wait = Integer.valueOf(prop.getProperty("cycle"))*10;
+            Thread.sleep(wait);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
          player.takeLife();
       }
-      if (player.lives <= 0) {
+      if (player.isDead()) {
          endGame();
       }
    }

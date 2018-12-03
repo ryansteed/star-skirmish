@@ -149,6 +149,9 @@ class Player extends GameObject {
             this.repaint();
         }
     }
+    protected boolean isDead() {
+        return lives <= 0;
+    }
 
     @Override
     public void paintComponent(Graphics g) {

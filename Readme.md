@@ -30,16 +30,17 @@ Build:
     - use rectangle contact boxes - then .intersect is handy for comparing positions -->
 <!-- - Create more waves of aliens moving at increasing speeds -->
 - Game controls
-    - Construct meta overlay
-        <!-- - Lives -->
-        <!-- - Current Score -->
-        - High score
+    <!-- - Construct meta overlay
+        - Lives
+        - Current Score
+        - High score -->
     <!-- - Player size depends on number of lives -->
-    - Pause game to do death animation on contact
     - Key bindings to start, pause, reset
 - Design player appearance
 - Design alien appearance
 - Add stars
+- Pause game to do death animation on contact
+- Try separating the animation timer (along with requisite wave, etc.) and the start/stop controller - turn the update class into an entirely separate class and create a new one on game start
 
 Finalize:
 - Javadoc annotations
