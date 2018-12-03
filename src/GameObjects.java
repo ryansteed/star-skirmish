@@ -84,7 +84,6 @@ class Player extends GameObject {
     Player(Euclidean init, Dimension hitbox, Area boundary, int maxAccel, Properties prop) {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
         registerMoveActions(maxAccel);
-        
     }
     private void registerMoveActions(int maxAccel) {
         MoveAction moveRight = new MoveAction(new Euclidean(maxAccel, 0));

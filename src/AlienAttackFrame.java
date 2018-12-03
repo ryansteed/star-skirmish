@@ -6,6 +6,7 @@
  */
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.OverlayLayout;
 import java.awt.Dimension;
 
 public class AlienAttackFrame extends JFrame
@@ -14,18 +15,25 @@ public class AlienAttackFrame extends JFrame
    private int sizeX = 224 * 2;
    private int sizeY = 288 * 2;
    private Dimension size;
-   private Background stage;
+
+   private BackgroundOverlay stage;
+   private MetaOverlay overlay;
 
    public AlienAttackFrame(Dimension size, ArrayList<GameObject> objects)
    {
       setTitle("Alien Attack!");
       setPreferredSize(size);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-      stage = new Background(new Dimension(sizeX, sizeY));
+   
+      setLayout(new OverlayLayout(getContentPane()));
+      stage = new BackgroundOverlay(new Dimension(sizeX, sizeY));
       update(objects);
-      add(stage);
 
+      overlay = new MetaOverlay(size);
+      
+      add(overlay);
+      add(stage);
+   
       pack();
       setVisible(true);
    }

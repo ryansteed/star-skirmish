@@ -23,13 +23,12 @@ Build:
 <!-- - Build basic aliens based on GameObject abstract - start with a green square -->
 <!-- - Package aliens into waves -->
 <!-- - Create automatic alien movement with PhysicsEngine, instantiate with waves (of a certain speed) -->
-- Create user-controlled motion for player with PhysicsEngine
-- Add boundaries to user motion
-- Display a score - +1 for every alien passed
+<!-- - Create user-controlled motion for player with PhysicsEngine -->
+<!-- - Add boundaries to user motion -->
+<!-- - Display a score - +1 for every alien passed -->
 - Add collisions & count lives beside score 
     - use rectangle contact boxes - then .intersect is handy for comparing positions
-    - checking collisions, try the quadrant method here https://gamedev.stackexchange.com/questions/46745/what-is-the-best-way-to-check-lists-of-objects-that-collide
-- Create more waves of aliens moving at increasing speeds
+<!-- - Create more waves of aliens moving at increasing speeds -->
 - Design player appearance
 - Design alien appearance
 - Add stars

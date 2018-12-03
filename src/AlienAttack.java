@@ -28,7 +28,10 @@ public class AlienAttack
    private static AlienAttack instance;
 
    private AlienAttackFrame frame;
+   private MetaOverlay overlay;
    private ArrayList<GameObject> objects;
+   private Player player;
+   private ArrayList<GameObject> lives;
    private Wave currentWave;
    private int score;
    private Timer animationTimer;
@@ -82,12 +85,14 @@ public class AlienAttack
             (int) (yBound-playerSize.getHeight())
          )
       );
-      Player player = new Player(playerInit, playerSize, playerBoundary, 5, prop);
+      player = new Player(playerInit, playerSize, playerBoundary, 5, prop);
       objects.add(player);
    }
 
    public void startGame() {
       score = 0;
+      //TODO: make these lives into player copies in the bottom right
+      // lives = Integer.valueOf(prop.getProperty("plives"));
       // first wave
       currentWave = new Wave(5, 3);
       animationTimer.start();
@@ -101,10 +106,9 @@ public class AlienAttack
          // System.out.println("Cycle");
          ArrayList<GameObject> activeObjects = new ArrayList<GameObject>(objects);
          if (currentWave != null) {
+            checkCollisions();
             score += currentWave.update();
             if (currentWave.cleared()) {
-               // TODO: update to a new wave instead of ending game
-               // noStopRequested = false;
                score += 1;
                currentWave = new Wave(currentWave.numTotal + 1, currentWave.speed + 5);
             }
@@ -112,6 +116,28 @@ public class AlienAttack
          }
          frame.update(activeObjects);
       }
+   }
+
+   private void checkCollisions() {
+      // Iterator iter = aliens.iterator();
+      // while (iter.hasNext()) {
+      //    Alien current = (Alien) iter.next();
+      //    // if alien past screen, delete and add points
+      //    if (currerlaynt.engine.getY() > AlienAttack.yBound) {
+      //       score += current.value;
+      //       numCleared += 1;
+      //       // System.out.println("AlienAttack:164> Removing alien due to out of bounds");
+      //       iter.remove();
+      //    }
+      // }
+
+      // TODO: for each life lost, remove a life image
+      // lives -= currentWave.checkCollisions();
+      // if (lives.size() <= 0) {
+      //    System.out.println("Ending game");
+      //    animationTimer.stop();
+      //    endGame();
+      // }
    }
    
    private void createAndShowGUI()
@@ -192,7 +218,18 @@ public class AlienAttack
          // https://stackoverflow.com/questions/6011943/java-normal-distribution
          return new Alien(alienInit, new Random().nextInt(3), prop);
       }
-
+      protected int checkCollisions() {
+         int collisions = 0;
+         Iterator<Alien> iter = aliens.iterator();
+         while (iter.hasNext()) {
+            if (iter.next().intersects(player)) {
+               collisions++;
+               numCleared++;
+               iter.remove();
+            }
+         }
+         return collisions;
+      }
       protected boolean cleared() {
          return numCleared == numTotal;
       }
@@ -200,13 +237,13 @@ public class AlienAttack
          int score = 0;
          // To permit removal in place
          // https://www.geeksforgeeks.org/remove-element-arraylist-java/
-         Iterator iter = aliens.iterator();
+         Iterator<Alien> iter = aliens.iterator();
          while (iter.hasNext()) {
-            Alien current = (Alien) iter.next();
+            Alien current = iter.next();
             // if alien past screen, delete and add points
             if (current.engine.getY() > AlienAttack.yBound) {
                score += current.value;
-               numCleared += 1;
+               numCleared ++;
                // System.out.println("AlienAttack:164> Removing alien due to out of bounds");
                iter.remove();
             }
