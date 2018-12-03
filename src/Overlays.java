@@ -42,7 +42,7 @@ class MetaOverlay extends Overlay {
         super(dimension);
         setBackground(new Color(0, 0, 0, 0));
         Lives lifeDisplay = new Lives(lives);
-        lifeDisplay.setLocation(0, (int) (dimension.getHeight() - AlienAttack.vertOffset - lifeDisplay.getHeight()));
+        lifeDisplay.setLocation(0, (int) (dimension.getHeight() - GameEngine.vertOffset - lifeDisplay.getHeight()));
         add(lifeDisplay);
 
         // Score scoreDisplay = new Score(score);

@@ -14,14 +14,14 @@ import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.File;
 
-public class AlienAttackFrame extends JFrame
+public class GameFrame extends JFrame
 {
    static final long serialVersionUID = 1L;
 
    private BackgroundOverlay stage;
    protected MetaOverlay overlay;
 
-   public AlienAttackFrame(Dimension size, int highscore)
+   public GameFrame(Dimension size, int highscore)
    {
       // get custom Galaga font
       try {
