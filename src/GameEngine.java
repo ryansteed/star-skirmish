@@ -8,14 +8,17 @@
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.KeyStroke;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.Dimension;
-import java.util.Random;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -24,7 +27,7 @@ import java.io.IOException;
 
 public class GameEngine {
     // properties
-    private static Properties prop;
+    protected static Properties prop;
     private static String propPath = "resources/AlienAttack.properties";
 
     private GameFrame frame;
@@ -35,15 +38,31 @@ public class GameEngine {
     private int highscore;
     private Timer animationTimer;
 
-    private static Dimension size = new Dimension(900, 900);
+    protected static Dimension size = new Dimension(900, 900);
     protected static int vertOffset = 146;
-    private static int yBound = (int) size.getHeight() - vertOffset;
+    protected static int yBound = (int) size.getHeight() - vertOffset;
+
+    private AbstractAction start;
+    private AbstractAction pause;
+    private AbstractAction resume;
 
     public GameEngine() {
         loadProperties();
-
         currentWave = null;
+        setTimer();
+        loadObjects();
+        setShutdownHook();
 
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                frame = new GameFrame(size, highscore);
+                frame.update(objects, 0, Integer.valueOf(prop.getProperty("plives")));
+                registerGameControls();
+            }
+        });
+    }
+
+    private void setTimer() {
         animationTimer = new Timer(Integer.parseInt((prop.getProperty("cycle"))), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,9 +73,9 @@ public class GameEngine {
                 }
             }
         });
+    }
 
-        loadObjects();
-
+    private void setShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 System.out.println("Storing highscore before shutdown");
@@ -84,26 +103,6 @@ public class GameEngine {
         objects.add(player);
     }
 
-    public void start() {
-        score = 0;
-        player.lives = Integer.valueOf(prop.getProperty("plives"));
-        // first wave
-        // TODO: make these parameters into properties
-        currentWave = new Wave(5, 3);
-        animationTimer.start();
-    }
-
-    public void end() {
-        animationTimer.stop();
-        System.out.println("Final Score: " + score);
-        // write high score to properties file
-        // http://roufid.com/write-properties-files-in-java/
-        if (score > highscore) {
-            highscore = score;
-            System.out.println("Updated high score");
-        }
-    }
-
     class Update implements Runnable {
         public void run() {
             // System.out.println("Cycle");
@@ -113,7 +112,8 @@ public class GameEngine {
                 score += currentWave.update();
                 if (currentWave.cleared()) {
                     score += 1;
-                    currentWave = new Wave(currentWave.numTotal + 1, currentWave.speed + 5);
+                    // TODO: make this increment a property
+                    currentWave = new Wave(currentWave.number + 1);
                 }
                 activeObjects.addAll(currentWave.aliens);
             }
@@ -122,24 +122,22 @@ public class GameEngine {
     }
 
     private void checkCollisions() {
-        int collisions = currentWave.checkCollisions();
-        for (int i = 0; i < collisions; i++) {
-            try {
-                int wait = Integer.valueOf(prop.getProperty("cycle")) * 10;
-                Thread.sleep(wait);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        Iterator<Alien> iter = currentWave.iterAliens();
+        while (iter.hasNext()) {
+            if (iter.next().intersects(player)) {
+                iter.remove();
+                try {
+                    int wait = Integer.valueOf(prop.getProperty("cycle")) * 10;
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                player.takeLife();
             }
-            player.takeLife();
         }
         if (player.isDead()) {
             end();
         }
-    }
-
-    protected void createAndShowGUI() {
-        frame = new GameFrame(size, highscore);
-        frame.update(objects, 0, Integer.valueOf(prop.getProperty("plives")));
     }
 
     private void loadProperties() {
@@ -162,87 +160,67 @@ public class GameEngine {
         highscore = Integer.valueOf(prop.getProperty("highscore"));
     }
 
-    class Wave {
-        private int numCleared;
-        private int numTotal;
-        private int speed;
-        protected ArrayList<Alien> aliens;
+    private void registerGameControls() {
+        start = new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
+                pause.setEnabled(true);
 
-        Wave(int number, int speed) {
-            this.numTotal = number;
-            this.numCleared = 0;
-            this.speed = speed;
-            this.aliens = new ArrayList<Alien>();
-            addNewAliens(number);
-        }
-
-        private void addNewAliens(int n) {
-            for (int i = 0; i < n; i++) {
-                trySpawn(n);
+                score = 0;
+                player.lives = Integer.valueOf(prop.getProperty("plives"));
+                // first wave
+                // TODO: make these parameters into properties
+                currentWave = new Wave(5);
+                frame.gameView();
+                animationTimer.start();
             }
-        }
+        };
+        frame.controller.getActionMap().put("start", start);
 
-        private void trySpawn(int n) {
-            Alien alien = spawn(n);
-            if (isValidSpawnPosition(alien)) {
-                aliens.add(alien);
-                return;
+        pause = new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
+                frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "resume");
+                resume.setEnabled(true);
+
+                animationTimer.stop();
+                frame.menuView('p');
             }
-            trySpawn(n);
-        }
+        };
+        frame.controller.getActionMap().put("pause", pause);
 
-        private boolean isValidSpawnPosition(Alien spawned) {
-            boolean intersection = false;
-            for (Alien other : aliens) {
-                if (spawned.intersects(other)) {
-                    intersection = true;
-                }
+        resume = new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
+                pause.setEnabled(true);
+
+                frame.gameView();
+                animationTimer.start();
             }
-            return !intersection;
-        }
+        };
+        frame.controller.getActionMap().put("resume", resume);
 
-        private Alien spawn(int n) {
-            int initX = (int) (Math.random() * size.getWidth());
-            int initY = -(int) (Math.random() * n * size.getHeight() / 10 + size.getHeight() / 10);
-            Euclidean alienInit = new Euclidean(initX, initY);
-            // TODO: use normal dist to choose tier level based on wave difficulty
-            // https://stackoverflow.com/questions/6011943/java-normal-distribution
-            return new Alien(alienInit, new Random().nextInt(3), prop);
-        }
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "start");
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "pause");
+    }
 
-        protected int checkCollisions() {
-            int collisions = 0;
-            Iterator<Alien> iter = aliens.iterator();
-            while (iter.hasNext()) {
-                if (iter.next().intersects(player)) {
-                    collisions++;
-                    numCleared++;
-                    iter.remove();
-                }
-            }
-            return collisions;
-        }
-
-        protected boolean cleared() {
-            return numCleared == numTotal;
-        }
-
-        protected int update() {
-            int score = 0;
-            // To permit removal in place
-            // https://www.geeksforgeeks.org/remove-element-arraylist-java/
-            Iterator<Alien> iter = aliens.iterator();
-            while (iter.hasNext()) {
-                Alien current = iter.next();
-                // if alien past screen, delete and add points
-                if (current.engine.getY() > GameEngine.yBound) {
-                    score += current.value;
-                    numCleared++;
-                    // System.out.println("AlienAttack:164> Removing alien due to out of bounds");
-                    iter.remove();
-                }
-            }
-            return score;
+    public void end() {
+        animationTimer.stop();
+        frame.menuView('e');
+        // TODO: display game over
+        System.out.println("Final Score: " + score);
+        // write high score to properties file
+        // http://roufid.com/write-properties-files-in-java/
+        if (score > highscore) {
+            highscore = score;
+            System.out.println("Updated high score");
         }
     }
+    
 }

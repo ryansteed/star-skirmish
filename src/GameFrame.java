@@ -20,6 +20,7 @@ public class GameFrame extends JFrame
 
    private BackgroundOverlay stage;
    protected MetaOverlay overlay;
+   protected GameController controller;
 
    public GameFrame(Dimension size, int highscore)
    {
@@ -37,15 +38,38 @@ public class GameFrame extends JFrame
       setResizable(false);
    
       setLayout(new OverlayLayout(getContentPane()));
+
       stage = new BackgroundOverlay(size);
-
-
       overlay = new MetaOverlay(size, highscore);
+      controller = new GameController(size);
+      controller.startMenu();
+
+      add(controller);
       add(overlay);
       add(stage);
    
+      menuView('s');
       pack();
       setVisible(true);
+   }
+
+   protected void gameView() {
+      controller.removeAll();
+      overlay.setVisible(true);
+   }
+   
+   protected void menuView(char menu) {
+      switch (menu) {
+         case 's': 
+            controller.startMenu();
+            break;
+         case 'p':
+            controller.pauseMenu();
+            break;
+         case 'e':
+            controller.endMenu();
+            break;
+      }
    }
 
    protected void update(ArrayList<GameObject> objects, int score, int lives) {

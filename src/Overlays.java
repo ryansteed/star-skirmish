@@ -36,11 +36,11 @@ class MetaOverlay extends Overlay {
     static final long serialVersionUID = 1L;
     protected int score;
     protected int lives;
-    protected static Font font = new Font("Emulogic", Font.PLAIN, 20);
 
     public MetaOverlay(Dimension dimension, int highscore) {
         super(dimension);
         setBackground(new Color(0, 0, 0, 0));
+
         Lives lifeDisplay = new Lives(lives);
         lifeDisplay.setLocation(0, (int) (dimension.getHeight() - GameEngine.vertOffset - lifeDisplay.getHeight()));
         add(lifeDisplay);
@@ -93,17 +93,6 @@ class MetaOverlay extends Overlay {
         }
     }
 
-    class Label extends JLabel {
-        static final long serialVersionUID = 1L;
-
-        Label(String label, Color color) {
-            setText(label);
-            setFont(font);
-            setForeground(color);
-            setSize(getPreferredSize());
-        }
-    }
-
     class Score extends Label {
         static final long serialVersionUID = 1L;
 
@@ -131,5 +120,47 @@ class MetaOverlay extends Overlay {
             setText(formatScore(score));
             setSize(getPreferredSize());
         }
+    }
+}
+
+class GameController extends Overlay {
+    static final long serialVersionUID = 1L;
+    private Dimension size;
+
+    public GameController(Dimension dimension) {
+        super(dimension);
+        size = dimension;
+        setBackground(new Color(0, 0, 0, 0));
+    }
+
+    protected void startMenu() {
+        makeMenuText("<html>[SPACE] Start<br><br>[ESC] Pause</html>");
+    }
+    
+    protected void pauseMenu() {
+        makeMenuText("<html>[SPACE] Resume<br><br>[R] RESET</html>");
+    }
+
+    private void makeMenuText(String html) {
+        removeAll();
+        Label menu = new Label(html, Color.white);
+        menu.setLocation((int) (size.getWidth() / 2 - menu.getWidth() / 2),
+                (int) (size.getHeight() / 2 - menu.getHeight()));
+        add(menu);
+    }
+
+    protected void endMenu() {
+        makeMenuText("<html>End</html>");
+    }
+}
+
+class Label extends JLabel {
+    static final long serialVersionUID = 1L;
+
+    Label(String label, Color color) {
+        setText(label);
+        setFont(new Font("Emulogic", Font.PLAIN, 20));
+        setForeground(color);
+        setSize(getPreferredSize());
     }
 }
