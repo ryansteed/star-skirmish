@@ -26,9 +26,17 @@ Build:
 <!-- - Create user-controlled motion for player with PhysicsEngine -->
 <!-- - Add boundaries to user motion -->
 <!-- - Display a score - +1 for every alien passed -->
-- Add collisions & count lives beside score 
-    - use rectangle contact boxes - then .intersect is handy for comparing positions
+<!-- - Add collisions & count lives beside score 
+    - use rectangle contact boxes - then .intersect is handy for comparing positions -->
 <!-- - Create more waves of aliens moving at increasing speeds -->
+- Game controls
+    - Construct meta overlay
+        <!-- - Lives -->
+        <!-- - Current Score -->
+        - High score
+    <!-- - Player size depends on number of lives -->
+    - Pause game to do death animation on contact
+    - Key bindings to start, pause, reset
 - Design player appearance
 - Design alien appearance
 - Add stars
