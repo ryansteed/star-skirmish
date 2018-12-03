@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Point;
 import javax.swing.JComponent;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
@@ -80,6 +81,8 @@ abstract class GameObject extends JComponent {
 
 class Player extends GameObject {
     static final long serialVersionUID = 1L;
+    protected int lives;
+    static int sizeInc = 30;
 
     Player(Euclidean init, Dimension hitbox, Area boundary, int maxAccel, Properties prop) {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
@@ -137,20 +140,34 @@ class Player extends GameObject {
             // System.out.println("Enabled move on release");
         }
     }
+    protected void takeLife() {
+        lives --;
+        System.out.println(String.format("%d-%d", (int) hitbox.getWidth(), sizeInc));
+        if ((int) hitbox.getWidth() - sizeInc > 0) {
+            System.out.println("Reducing size");
+            this.hitbox = new Dimension((int) hitbox.getWidth() - sizeInc, (int) hitbox.getHeight() - sizeInc);
+            setSize(hitbox);
+            this.repaint();
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        paintShip(g, new Point(0,0), hitbox);
+    }
+
+    protected static void paintShip(Graphics g, Point loc, Dimension size) {
         g.setColor(Color.red);
         // https://stackoverflow.com/questions/2509561/how-to-draw-a-filled-circle-in-java
-        g.fillRect(0, 0, (int) hitbox.getWidth(), (int) hitbox.getHeight());
+        g.fillRect(loc.x, loc.y, (int) size.getWidth(), (int) size.getHeight());
     }
 }
 
 class Alien extends GameObject {
     static final long serialVersionUID = 1L;
     protected int value;
-    private static int[] tiers = {30, 60, 90};
+    protected static int[] tiers = { 30, 60, 90 };
 
     Alien(Euclidean init, int tier, Properties prop) {
         super(init, new Dimension(tiers[tier], tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);

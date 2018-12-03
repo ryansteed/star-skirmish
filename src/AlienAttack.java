@@ -31,13 +31,13 @@ public class AlienAttack
    private MetaOverlay overlay;
    private ArrayList<GameObject> objects;
    private Player player;
-   private ArrayList<GameObject> lives;
    private Wave currentWave;
    private int score;
    private Timer animationTimer;
    
    private static Dimension size = new Dimension(900, 900);
-   private static int yBound = (int) size.getHeight() - 146;
+   protected static int vertOffset = 146;
+   private static int yBound = (int) size.getHeight() - vertOffset;
 
    public static AlienAttack Instance()
    {
@@ -74,7 +74,7 @@ public class AlienAttack
       // add initial game objects, like the player
       objects = new ArrayList<GameObject>();
       // player
-      Dimension playerSize = new Dimension(30, 30);
+      Dimension playerSize = new Dimension(90, 90);
       Euclidean playerInit = new Euclidean((int) (size.getWidth() / 2 - playerSize.getWidth() / 2),
             yBound - (int) playerSize.getHeight() * 2);
       Area playerBoundary = new Area(
@@ -92,7 +92,7 @@ public class AlienAttack
    public void startGame() {
       score = 0;
       //TODO: make these lives into player copies in the bottom right
-      // lives = Integer.valueOf(prop.getProperty("plives"));
+      player.lives = Integer.valueOf(prop.getProperty("plives"));
       // first wave
       currentWave = new Wave(5, 3);
       animationTimer.start();
@@ -114,7 +114,7 @@ public class AlienAttack
             }
             activeObjects.addAll(currentWave.aliens);
          }
-         frame.update(activeObjects);
+         frame.update(activeObjects, score, player.lives);
       }
    }
 
@@ -131,18 +131,22 @@ public class AlienAttack
       //    }
       // }
 
-      // TODO: for each life lost, remove a life image
-      // lives -= currentWave.checkCollisions();
-      // if (lives.size() <= 0) {
-      //    System.out.println("Ending game");
-      //    animationTimer.stop();
-      //    endGame();
-      // }
+      // TODO: for each life lost, remove a life image and reduce player size
+      int collisions = currentWave.checkCollisions();
+      for (int i=0; i<collisions; i++) {
+         player.takeLife();
+      }
+      if (player.lives <= 0) {
+         System.out.println("Ending game");
+         animationTimer.stop();
+         endGame();
+      }
    }
    
    private void createAndShowGUI()
    {
-      frame = new AlienAttackFrame(size, objects);
+      frame = new AlienAttackFrame(size);
+      frame.update(objects, 0, Integer.valueOf(prop.getProperty("plives")));
    }
 
    private void loadProperties() {
