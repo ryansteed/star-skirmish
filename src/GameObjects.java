@@ -142,9 +142,8 @@ class Player extends GameObject {
     }
     protected void takeLife() {
         lives --;
-        System.out.println(String.format("%d-%d", (int) hitbox.getWidth(), sizeInc));
         if ((int) hitbox.getWidth() - sizeInc > 0) {
-            System.out.println("Reducing size");
+            // System.out.println("Reducing size");
             this.hitbox = new Dimension((int) hitbox.getWidth() - sizeInc, (int) hitbox.getHeight() - sizeInc);
             setSize(hitbox);
             this.repaint();

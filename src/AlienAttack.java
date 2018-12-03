@@ -18,21 +18,23 @@ import java.util.Random;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class AlienAttack
 {
    // properties
-   private Properties prop;
+   private static Properties prop;
+   private static String propPath = "resources/AlienAttack.properties";
 
    private static AlienAttack instance;
 
    private AlienAttackFrame frame;
-   private MetaOverlay overlay;
    private ArrayList<GameObject> objects;
    private Player player;
    private Wave currentWave;
    private int score;
+   private int highscore;
    private Timer animationTimer;
    
    private static Dimension size = new Dimension(900, 900);
@@ -68,6 +70,19 @@ public class AlienAttack
             instance.createAndShowGUI();
          }
       });
+
+      Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+         public void run() {
+            System.out.println("Storing highscore before shutdown");
+            try (FileWriter inputStream = new FileWriter(propPath)) {
+               prop.setProperty("highscore", Integer.toString(highscore));
+               prop.store(inputStream, null);
+               inputStream.close();
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      }, "shutdown-thread"));
    }
 
    private void loadObjects() {
@@ -98,7 +113,14 @@ public class AlienAttack
       animationTimer.start();
    }
    public void endGame() {
+      animationTimer.stop();
       System.out.println("Final Score: "+score);
+      // write high score to properties file
+      // http://roufid.com/write-properties-files-in-java/
+      if (score > highscore) {
+         highscore = score;
+         System.out.println("Updated high score");
+      }
    }
 
    class Update implements Runnable {
@@ -137,15 +159,13 @@ public class AlienAttack
          player.takeLife();
       }
       if (player.lives <= 0) {
-         System.out.println("Ending game");
-         animationTimer.stop();
          endGame();
       }
    }
    
    private void createAndShowGUI()
    {
-      frame = new AlienAttackFrame(size);
+      frame = new AlienAttackFrame(size, highscore);
       frame.update(objects, 0, Integer.valueOf(prop.getProperty("plives")));
    }
 
@@ -153,7 +173,7 @@ public class AlienAttack
       prop = new Properties();
       InputStream input = null;
       try {
-         input = new FileInputStream("resources/AlienAttack.properties");
+         input = new FileInputStream(propPath);
          prop.load(input);
       } catch (IOException e) {
          e.printStackTrace();
@@ -166,6 +186,7 @@ public class AlienAttack
             }
          }
       }
+      highscore = Integer.valueOf(prop.getProperty("highscore"));
    }
    
    /**
