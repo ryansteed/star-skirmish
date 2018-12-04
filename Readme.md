@@ -39,18 +39,15 @@ Build:
 - Design player appearance
 - Design alien appearance
 - Add stars
-- Pause game to do death animation on contact
-- Try separating the animation timer (along with requisite wave, etc.) and the start/stop controller - turn the update class into an entirely separate class and create a new one on game start
-
-Finalize:
-- Javadoc annotations
-- Refactor for readable modularity - multiple files!
+- Add sound effects
+- Instead of pausing, play death animation and make player immune for animation period
+- Javadoc annotations and refactor
 - Refactor to standard java directory (maven standard)
 - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
 
-Bonus:
+Bonus (class Thursday):
 - Build a player missile
-- Bonus features
+- Other bonus features
 
 ### Class Notes 19Nov18
 Problem with repainting on interval - what if multiple inputs withinn the interval?

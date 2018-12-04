@@ -42,7 +42,6 @@ public class GameFrame extends JFrame
       stage = new BackgroundOverlay(size);
       overlay = new MetaOverlay(size, highscore);
       controller = new GameController(size);
-      controller.startMenu();
 
       add(controller);
       add(overlay);
@@ -55,16 +54,19 @@ public class GameFrame extends JFrame
 
    protected void gameView() {
       controller.removeAll();
-      overlay.setVisible(true);
    }
    
    protected void menuView(char menu) {
+      System.out.println("attemtping to switch "+menu);
       switch (menu) {
          case 's': 
+            System.out.println("Start menu time");
             controller.startMenu();
             break;
          case 'p':
+            System.out.println("Pause menu time");
             controller.pauseMenu();
+            this.repaint();
             break;
          case 'e':
             controller.endMenu();

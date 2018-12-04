@@ -134,23 +134,27 @@ class GameController extends Overlay {
     }
 
     protected void startMenu() {
-        makeMenuText("<html>[SPACE] Start<br><br>[ESC] Pause</html>");
+        makeMenuText("<html>[SPACE] Start<br><br>&nbsp;[ESC] &nbsp;Pause</html>", true);
     }
     
     protected void pauseMenu() {
-        makeMenuText("<html>[SPACE] Resume<br><br>[R] RESET</html>");
+        makeMenuText("<html><center>[SPACE] Resume</center></html>", false);
     }
 
-    private void makeMenuText(String html) {
+    private void makeMenuText(String html, boolean includeTitle) {
         removeAll();
+        Label title = new Label(includeTitle ? "Alien Attack" : "" , Color.green);
+        title.setLocation((int) (size.getWidth() / 2 - title.getWidth() / 2),
+                (int) (size.getHeight() / 5 - title.getHeight()));
+        add(title);
         Label menu = new Label(html, Color.white);
         menu.setLocation((int) (size.getWidth() / 2 - menu.getWidth() / 2),
-                (int) (size.getHeight() / 2 - menu.getHeight()));
+                (int) (size.getHeight() / 3 - menu.getHeight() / 2));
         add(menu);
     }
 
     protected void endMenu() {
-        makeMenuText("<html>End</html>");
+        makeMenuText("<html><center><p style='color: red'>Game Over</p><br><br>[SPACE] New Game</center></html>", true);
     }
 }
 

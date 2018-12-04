@@ -82,10 +82,12 @@ abstract class GameObject extends JComponent {
 class Player extends GameObject {
     static final long serialVersionUID = 1L;
     protected int lives;
+    private Dimension originalSize;
     static int sizeInc = 30;
 
     Player(Euclidean init, Dimension hitbox, Area boundary, int maxAccel, Properties prop) {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
+        originalSize = hitbox;
         registerMoveActions(maxAccel);
     }
     private void registerMoveActions(int maxAccel) {
@@ -139,6 +141,12 @@ class Player extends GameObject {
             toEnable.setEnabled(true);
             // System.out.println("Enabled move on release");
         }
+    }
+    protected void reset(int lives) {
+        this.lives = lives;
+        this.hitbox = originalSize;
+        setSize(hitbox);
+        this.repaint();
     }
     protected void takeLife() {
         lives --;

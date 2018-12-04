@@ -169,7 +169,7 @@ public class GameEngine {
                 pause.setEnabled(true);
 
                 score = 0;
-                player.lives = Integer.valueOf(prop.getProperty("plives"));
+                player.reset(Integer.valueOf(prop.getProperty("plives")));
                 // first wave
                 // TODO: make these parameters into properties
                 currentWave = new Wave(5);
@@ -212,9 +212,11 @@ public class GameEngine {
 
     public void end() {
         animationTimer.stop();
+        pause.setEnabled(false);
+        resume.setEnabled(false);
+        start.setEnabled(true);
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "start");
         frame.menuView('e');
-        // TODO: display game over
-        System.out.println("Final Score: " + score);
         // write high score to properties file
         // http://roufid.com/write-properties-files-in-java/
         if (score > highscore) {
