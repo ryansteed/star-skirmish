@@ -10,7 +10,8 @@ import java.lang.Math;
 abstract class Painter {
     private Graphics2D g2;
     private Point origin;
-    private double pixelSize;
+    private double pixelWidth;
+    private double pixelHeight;
     private double xShift;
     private double yShift;
     private char[][] pmap;
@@ -27,9 +28,10 @@ abstract class Painter {
         this.g2 = (Graphics2D) g;
         origin = givenOrigin;
         // System.out.println(size);
-        pixelSize = Math.min(size.getHeight() / height, size.getWidth() / width);
-        xShift = (size.getWidth()  - pixelSize * width) / 2;
-        yShift = (size.getHeight() - pixelSize * height) / 2;
+        pixelWidth = size.getWidth() / width;
+        pixelHeight = size.getHeight() / height;
+        xShift = (size.getWidth()  - pixelWidth * width) / 2;
+        yShift = (size.getHeight() - pixelHeight * height) / 2;
         // System.out.println(xShift);
         // System.out.println(yShift);
 
@@ -51,7 +53,7 @@ abstract class Painter {
     private void paintPixel(Point loc, Color color) {
         g2.setColor(color);
 
-        Rectangle2D.Double rect = new Rectangle2D.Double(origin.x+xShift+loc.x*pixelSize, origin.y+yShift+loc.y*pixelSize, pixelSize, pixelSize);
+        Rectangle2D.Double rect = new Rectangle2D.Double(origin.x+xShift+loc.x*pixelWidth, origin.y+yShift+loc.y*pixelHeight, pixelWidth, pixelHeight);
         g2.fill(rect);
         // g2.fillRect(origin.x + loc.x * pixelSize, origin.y + loc.y * pixelSize, pixelSize, pixelSize);
     }

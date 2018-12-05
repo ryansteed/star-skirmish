@@ -145,18 +145,18 @@ class GameController extends Overlay {
 
     private void makeMenuText(String html, boolean includeTitle) {
         removeAll();
-        Label title = new Label(includeTitle ? "Alien Attack" : "" , Color.green);
+        Label title = new Label(includeTitle ? "Star Skirmish" : "" , new Color(254,218,74));
         title.setLocation((int) (size.getWidth() / 2 - title.getWidth() / 2),
-                (int) (size.getHeight() / 5 - title.getHeight()));
+                (int) (size.getHeight() / 4 - title.getHeight()));
         add(title);
         Label menu = new Label(html, Color.white);
         menu.setLocation((int) (size.getWidth() / 2 - menu.getWidth() / 2),
-                (int) (size.getHeight() / 3 - menu.getHeight() / 2));
+                (int) (size.getHeight() * 3 / 8 - menu.getHeight() / 2));
         add(menu);
     }
 
     protected void endMenu() {
-        makeMenuText("<html><center><p style='color: red'>Game Over</p>  <br><br>[SPACE] New Game</center></html>", true);
+        makeMenuText("<html><center><p style='color: #2719C7'>Game Over</p>  <br><br>[SPACE] New Game</center></html>", true);
     }
 }
 

@@ -56,13 +56,17 @@ abstract class GameObject extends JComponent {
         Euclidean newPos = this.engine.move();
         boolean inBounds = true;
         if (boundary != null) {
-            inBounds = getIntersect(boundary).equals(new Area(this.getHitbox()));
+            inBounds = isInBounds();
         }
         if (inBounds) {
             setLocation(newPos.x, newPos.y);
         } else {
             handleOutOfBounds(newPos);
         }
+    }
+
+    private boolean isInBounds() {
+        return getIntersect(boundary).equals(new Area(this.getHitbox()));
     }
 
     protected void handleOutOfBounds(Euclidean newPos) {
@@ -166,6 +170,8 @@ class Player extends GameObject {
         this.repaint();
     }
     protected void takeLife() {
+        Sound deathSound = new Sound("resources/sounds/death.wav");
+        deathSound.play();
         lives --;
         if ((int) hitbox.getWidth() - sizeInc > 0) {
             // System.out.println("Reducing size");
@@ -215,7 +221,7 @@ class Star extends GameObject {
         engine.p.y = 0;
         engine.p.x = (int) (Math.random() * boundary.getBounds().getWidth());
         // new speed
-        this.speed = speed + randomSpeed();
+        this.speed = speed + randomSpeed() / 2;
         engine.v.y = speed;
         // new size
         this.hitbox = randomDimension();
@@ -223,17 +229,27 @@ class Star extends GameObject {
         setLocation(engine.getX(), engine.getY());
     }
 
+    protected void reset() {
+        this.speed = randomSpeed();
+        this.hitbox = randomDimension();
+        setSize(randomDimension());
+        engine.v.y = speed;
+        engine.a.y = 0;
+    }
+
     @Override
     protected void update() {
         super.update();
-
         // elongate star based on speed
         // funky lorentz transformation
-        // int c = 1;
-        // hitbox.setSize(
-        //     hitbox.getWidth(), 
-        //     hitbox.getHeight() * Math.sqrt(Math.pow(engine.v.x / c, 2)
-        // ));
+        int c = 15;
+        int lambda = engine.v.y / c > 1 ? engine.v.y / c : 1;
+        // System.out.println(lambda);
+        hitbox.setSize(
+            hitbox.getWidth(), 
+            hitbox.getHeight() * lambda < boundary.getBounds().getHeight() ? hitbox.getHeight() * lambda : boundary.getBounds().getHeight()
+        );
+        // System.out.println(hitbox);
         setSize(hitbox);
     }
 }

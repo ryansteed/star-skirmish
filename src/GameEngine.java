@@ -28,7 +28,7 @@ import java.io.IOException;
 public class GameEngine {
     // properties
     protected static Properties prop;
-    private static String propPath = "resources/AlienAttack.properties";
+    private static String propPath = "resources/StarSkirmish.properties";
 
     private GameFrame frame;
     private ArrayList<GameObject> objects;
@@ -48,12 +48,20 @@ public class GameEngine {
     private AbstractAction resume;
     private AbstractAction hyperspace;
 
+    private Sound mainMusic;
+    private Sound introMusic;
+
     public GameEngine() {
         loadProperties();
+        
         currentWave = null;
+        
         setTimer();
         loadObjects();
         setShutdownHook();
+        
+        mainMusic = new Sound("resources/sounds/main.wav");
+        introMusic = new Sound("resources/sounds/intro.wav");
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -61,6 +69,7 @@ public class GameEngine {
                 ArrayList<GameObject> activeObjects = new ArrayList<GameObject>(objects);
                 activeObjects.addAll(stars);
                 frame.update(activeObjects, 0, Integer.valueOf(prop.getProperty("plives")));
+                introMusic.loop();
                 registerGameControls();
             }
         });
@@ -97,7 +106,6 @@ public class GameEngine {
     private void loadObjects() {
         // add initial game objects, like the player
         objects = new ArrayList<GameObject>();
-        stars = new ArrayList<Star>();
         // player
         Dimension playerSize = new Dimension(90, 90);
         Euclidean playerInit = new Euclidean((int) (size.getWidth() / 2 - playerSize.getWidth() / 2),
@@ -107,16 +115,22 @@ public class GameEngine {
         player = new Player(playerInit, playerSize, playerBoundary, 5, prop);
         objects.add(player);
 
+        loadStars();  
+    }
+
+    private void loadStars() {
+        stars = new ArrayList<Star>();
         // stars
-        for (int i=0; i<Integer.valueOf(prop.getProperty("stars")); i++) {
-            Euclidean init = new Euclidean(
-                (int) (Math.random() * GameEngine.size.getWidth()), 
-                (int) (Math.random() * GameEngine.size.getHeight())
-            );
-            stars.add(new Star(
-                init, 
-                new Area(new Rectangle(0, 0, (int) size.getWidth(), (int) yBound))
-            ));
+        for (int i = 0; i < Integer.valueOf(prop.getProperty("stars")); i++) {
+            Euclidean init = new Euclidean((int) (Math.random() * GameEngine.size.getWidth()),
+                    (int) (Math.random() * GameEngine.size.getHeight()));
+            stars.add(new Star(init, new Area(new Rectangle(0, 0, (int) size.getWidth(), (int) yBound))));
+        }
+    }
+
+    private void resetStars() {
+        for (Star star : stars) {
+            star.reset();
         }
     }
 
@@ -188,11 +202,14 @@ public class GameEngine {
                 hyperspace.setEnabled(true);
 
                 score = 0;
+                resetStars();
                 player.reset(Integer.valueOf(prop.getProperty("plives")));
                 // first wave
                 // TODO: make these parameters into properties
                 currentWave = new Wave(5);
                 frame.gameView();
+                introMusic.stop();
+                mainMusic.loop();
                 animationTimer.start();
             }
         };
@@ -231,7 +248,7 @@ public class GameEngine {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setEnabled(false);
-                System.out.println("Hyperspace mode");
+                System.out.println("Easter egg: hyperspace mode!");
                 for (Star star : stars) {
                     star.engine.a.y = 1;
                 }
@@ -245,6 +262,7 @@ public class GameEngine {
     }
 
     public void end() {
+        mainMusic.stop();
         animationTimer.stop();
         pause.setEnabled(false);
         resume.setEnabled(false);
@@ -255,8 +273,14 @@ public class GameEngine {
         // write high score to properties file
         // http://roufid.com/write-properties-files-in-java/
         if (score > highscore) {
+            Sound clearedSound = new Sound("resources/sounds/stage.wav");
+            clearedSound.play();
             highscore = score;
-            System.out.println("Updated high score");
+        }
+        else {
+            // play ending sound effect
+            Sound endSound = new Sound("resources/sounds/scream.wav");
+            endSound.play();
         }
     }
     

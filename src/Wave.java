@@ -43,7 +43,7 @@ class Wave {
 
     private Alien spawn(int n) {
         int initX = (int) (Math.random() * GameEngine.size.getWidth());
-        int initY = -(int) (Math.random() * n * GameEngine.size.getHeight() / 10 + GameEngine.size.getHeight() / 10);
+        int initY = -2 * (int) (Math.random() * n * GameEngine.size.getHeight() / 10 + GameEngine.size.getHeight() / 10);
         Euclidean alienInit = new Euclidean(initX, initY);
         // TODO: use normal dist to choose tier level based on wave difficulty
         // https://stackoverflow.com/questions/6011943/java-normal-distribution

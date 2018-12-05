@@ -32,7 +32,7 @@ public class GameFrame extends JFrame
          e.printStackTrace();
       }
 
-      setTitle("Alien Attack!");
+      setTitle("Star Skirmish");
       setPreferredSize(size);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setResizable(false);
