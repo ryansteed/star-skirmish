@@ -78,7 +78,7 @@ public class GameEngine {
     private void setShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                System.out.println("Storing highscore before shutdown");
+                // System.out.println("Storing highscore before shutdown");
                 try (FileWriter inputStream = new FileWriter(propPath)) {
                     prop.setProperty("highscore", Integer.toString(highscore));
                     prop.store(inputStream, null);

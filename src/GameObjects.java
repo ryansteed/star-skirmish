@@ -11,12 +11,15 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.KeyStroke;
 
+// import javax.swing.BorderFactory;
+
 abstract class GameObject extends JComponent {
     static final long serialVersionUID = 1L;
     protected Dimension hitbox;
     protected int speed;
     protected Physics engine;
     private Area boundary;
+    protected Painter painter;
     
     public GameObject(Euclidean init, Dimension hitbox, int speed, Area boundary) {
         this.hitbox = hitbox;
@@ -26,6 +29,7 @@ abstract class GameObject extends JComponent {
         this.boundary = boundary;
         setSize(hitbox);
         setLocation(init.x, init.y);
+        // setBorder(BorderFactory.createLineBorder(Color.green));
     }
 
     protected boolean intersects(GameObject other) {
@@ -77,6 +81,12 @@ abstract class GameObject extends JComponent {
             setLocation(engine.getX(), engine.getY());
         }
     }
+    
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        painter.paint(g, new Point(0, 0), hitbox);
+    }
 }
 
 class Player extends GameObject {
@@ -89,6 +99,7 @@ class Player extends GameObject {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
         originalSize = hitbox;
         registerMoveActions(maxAccel);
+        painter = new ShipPainter();
     }
     private void registerMoveActions(int maxAccel) {
         MoveAction moveRight = new MoveAction(new Euclidean(maxAccel, 0));
@@ -160,18 +171,6 @@ class Player extends GameObject {
     protected boolean isDead() {
         return lives <= 0;
     }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        paintShip(g, new Point(0,0), hitbox);
-    }
-
-    protected static void paintShip(Graphics g, Point loc, Dimension size) {
-        g.setColor(Color.red);
-        // https://stackoverflow.com/questions/2509561/how-to-draw-a-filled-circle-in-java
-        g.fillRect(loc.x, loc.y, (int) size.getWidth(), (int) size.getHeight());
-    }
 }
 
 class Alien extends GameObject {
@@ -183,16 +182,17 @@ class Alien extends GameObject {
         super(init, new Dimension(tiers[tier], tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);
         this.value = Integer.valueOf(prop.getProperty("apoints"+tier));
         engine.v.y = speed;
+        painter = new AlienPainter();
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(Color.green);
-        // https://stackoverflow.com/questions/2509561/how-to-draw-a-filled-circle-in-java
-        // Rectangle r = new Rectangle(engine.getX(), engine.getY(), (int)
-        // hitbox.getWidth(), (int) hitbox.getHeight());
-        // System.out.println(r);
-        g.fillRect(0, 0, (int) hitbox.getWidth(), (int) hitbox.getHeight());
-    }
+    // @Override
+    // public void paintComponent(Graphics g) {
+    //     super.paintComponent(g);
+    //     g.setColor(Color.green);
+    //     // https://stackoverflow.com/questions/2509561/how-to-draw-a-filled-circle-in-java
+    //     // Rectangle r = new Rectangle(engine.getX(), engine.getY(), (int)
+    //     // hitbox.getWidth(), (int) hitbox.getHeight());
+    //     // System.out.println(r);
+    //     g.fillRect(0, 0, (int) hitbox.getWidth(), (int) hitbox.getHeight());
+    // }
 }

@@ -74,9 +74,11 @@ class MetaOverlay extends Overlay {
         static final long serialVersionUID = 1L;
         protected int lives;
         private int iconWidth;
+        ShipPainter painter;
 
         Lives(int lives) {
             this(lives, 25);
+            painter = new ShipPainter();
         }
 
         Lives(int lives, int iconWidth) {
@@ -88,7 +90,7 @@ class MetaOverlay extends Overlay {
         @Override
         public void paintComponent(Graphics g) {
             for (int i = 0; i < lives; i++) {
-                Player.paintShip(g, new Point(i * (iconWidth * 5 / 4), 0), new Dimension(iconWidth, iconWidth));
+                painter.paint(g, new Point(i * (iconWidth * 5 / 4), 0), new Dimension(iconWidth, iconWidth));
             }
         }
     }
@@ -154,7 +156,7 @@ class GameController extends Overlay {
     }
 
     protected void endMenu() {
-        makeMenuText("<html><center><p style='color: red'>Game Over</p><br><br>[SPACE] New Game</center></html>", true);
+        makeMenuText("<html><center><p style='color: red'>Game Over</p>  <br><br>[SPACE] New Game</center></html>", true);
     }
 }
 
