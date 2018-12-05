@@ -59,7 +59,9 @@ public class GameEngine {
         setTimer();
         loadObjects();
         setShutdownHook();
-        
+
+        // All sound effects royalty-free from
+        // https://downloads.khinsider.com/game-soundtracks/album/galaga-arcade
         mainMusic = new Sound("resources/sounds/main.wav");
         introMusic = new Sound("resources/sounds/intro.wav");
 
@@ -151,24 +153,18 @@ public class GameEngine {
             activeObjects.addAll(stars);
             frame.update(activeObjects, score, player.lives);
         }
-    }
-
-    private void checkCollisions() {
-        Iterator<Alien> iter = currentWave.iterAliens();
-        while (iter.hasNext()) {
-            if (iter.next().intersects(player)) {
-                iter.remove();
-                player.takeLife();
-                try {
-                    int wait = Integer.valueOf(prop.getProperty("cycle")) * 10;
-                    Thread.sleep(wait);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        
+        private void checkCollisions() {
+            Iterator<Alien> iter = currentWave.iterAliens();
+            while (iter.hasNext()) {
+                if (iter.next().intersects(player)) {
+                    iter.remove();
+                    player.takeLife();
                 }
             }
-        }
-        if (player.isDead()) {
-            end();
+            if (player.isDead()) {
+                end();
+            }
         }
     }
 

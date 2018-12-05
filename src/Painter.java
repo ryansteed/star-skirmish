@@ -17,6 +17,7 @@ abstract class Painter {
     private char[][] pmap;
     private int height;
     private int width;
+    private Color colorOverride;
     
     public Painter(int width, int height) {
         this.height = height;
@@ -79,22 +80,29 @@ abstract class Painter {
         return pm;
     }
 
+    protected void setColor(Color color) {
+        colorOverride = color;
+    }
+
     protected Color getColor(char c) {
-        Color color = Color.white;
-        switch (c) {
-        case 'b':
-            color = Color.darkGray;
-            break;
-        case 'r':
-            color = Color.red;
-            break;
-        case 'g':
-            color = Color.gray;
-            break;
-        case 'l':
-            color = Color.blue;
+        if (colorOverride == null) {
+            Color color = Color.white;
+            switch (c) {
+            case 'b':
+                color = Color.darkGray;
+                break;
+            case 'r':
+                color = Color.red;
+                break;
+            case 'g':
+                color = Color.gray;
+                break;
+            case 'l':
+                color = Color.blue;
+            }
+            return color;
         }
-        return color;
+        return colorOverride;
     }
 
     protected abstract char[][] getDesign();
@@ -105,6 +113,8 @@ abstract class Painter {
 }
 
 class ShipPainter extends Painter {
+
+    private Color colorOverride;
     
     public ShipPainter() {
         super(23, 25);

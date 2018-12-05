@@ -9,11 +9,13 @@ import java.awt.Shape;
 import java.awt.Point;
 import javax.swing.JComponent;
 import javax.swing.AbstractAction;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.KeyStroke;
+import java.awt.Color;
 
 // import javax.swing.BorderFactory;
-// import java.awt.Color;
 
 abstract class GameObject extends JComponent {
     static final long serialVersionUID = 1L;
@@ -104,12 +106,14 @@ class Player extends GameObject {
     protected int lives;
     private Dimension originalSize;
     static int sizeInc = 30;
+    private boolean immune;
 
     Player(Euclidean init, Dimension hitbox, Area boundary, int maxAccel, Properties prop) {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
         originalSize = hitbox;
         registerMoveActions(maxAccel);
         painter = new ShipPainter();
+        immune = false;
     }
     private void registerMoveActions(int maxAccel) {
         MoveAction moveRight = new MoveAction(new Euclidean(maxAccel, 0));
@@ -170,15 +174,49 @@ class Player extends GameObject {
         this.repaint();
     }
     protected void takeLife() {
-        Sound deathSound = new Sound("resources/sounds/death.wav");
-        deathSound.play();
-        lives --;
-        if ((int) hitbox.getWidth() - sizeInc > 0) {
-            // System.out.println("Reducing size");
-            this.hitbox = new Dimension((int) hitbox.getWidth() - sizeInc, (int) hitbox.getHeight() - sizeInc);
-            setSize(hitbox);
-            this.repaint();
+        if (!immune) {
+            lives--;
+            if (lives > 0) {
+                immune = true;
+
+                int counts = ;
+                painter.setColor(new Color(254, 218, 74));
+                ActionListener removeImmunity = new ActionListener() {
+                    private int counter;
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (counter == counts) {
+                            ((Timer) e.getSource()).stop();
+                            return;
+                        }
+                        immune = false;
+                        if (counter % 2 == 1) {
+                            painter.setColor(new Color(254, 218, 74));
+                            hitbox = getSizeUp();
+                        }
+                        else {
+                            painter.setColor(null);
+                            if ((int) hitbox.getWidth() - sizeInc > 0) {
+                                hitbox = getSizeDown();
+                            }
+                        }
+                        setSize(hitbox);
+                        repaint();
+                        counter++;
+                    }
+                };
+                Timer immunity = new Timer(Integer.valueOf(GameEngine.prop.getProperty("pimmunity")) / counts, removeImmunity);
+                immunity.start();
+            }
+            Sound deathSound = new Sound("resources/sounds/death.wav");
+            deathSound.play();
         }
+    }
+    private Dimension getSizeDown() {
+        return new Dimension((int) hitbox.getWidth() - sizeInc, (int) hitbox.getHeight() - sizeInc);
+    }
+    private Dimension getSizeUp() {
+        return new Dimension((int) hitbox.getWidth() + sizeInc, (int) hitbox.getHeight() + sizeInc);
     }
     protected boolean isDead() {
         return lives <= 0;
