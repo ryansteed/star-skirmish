@@ -158,13 +158,13 @@ public class GameEngine {
         while (iter.hasNext()) {
             if (iter.next().intersects(player)) {
                 iter.remove();
+                player.takeLife();
                 try {
                     int wait = Integer.valueOf(prop.getProperty("cycle")) * 10;
                     Thread.sleep(wait);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                player.takeLife();
             }
         }
         if (player.isDead()) {

@@ -38,9 +38,10 @@ Build:
     - Key bindings to start, pause, reset -->
 <!-- - Design player appearance -->
 <!-- - Design alien appearance -->
-- Add stars
-- Add death star to game over screen
+<!-- - Add stars -->
 - Add sound effects
+- Make sure no alien spawn outside right bound
+- Add death star to game over screen
 - Fix hit boxes
 - Instead of pausing, play death animation and make player immune for animation period
 - Javadoc annotations and refactor

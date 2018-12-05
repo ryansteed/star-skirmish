@@ -5,6 +5,7 @@ import java.util.Random;
 class Wave {
     protected ArrayList<Alien> aliens;
     protected int number;
+    protected static int[] tiers = { 30, 60, 90 };
 
     Wave(int number) {
         this.aliens = new ArrayList<Alien>();
@@ -42,12 +43,13 @@ class Wave {
     }
 
     private Alien spawn(int n) {
-        int initX = (int) (Math.random() * GameEngine.size.getWidth());
+        int tier = new Random().nextInt(3);
+        int initX = (int) (Math.random() * GameEngine.size.getWidth() - tiers[tier]);
         int initY = -2 * (int) (Math.random() * n * GameEngine.size.getHeight() / 10 + GameEngine.size.getHeight() / 10);
         Euclidean alienInit = new Euclidean(initX, initY);
         // TODO: use normal dist to choose tier level based on wave difficulty
         // https://stackoverflow.com/questions/6011943/java-normal-distribution
-        return new Alien(alienInit, new Random().nextInt(3), GameEngine.prop);
+        return new Alien(alienInit, tier, GameEngine.prop);
     }
 
     protected boolean cleared() {

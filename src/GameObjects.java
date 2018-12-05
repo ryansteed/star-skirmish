@@ -188,10 +188,9 @@ class Player extends GameObject {
 class Alien extends GameObject {
     static final long serialVersionUID = 1L;
     protected int value;
-    protected static int[] tiers = { 30, 60, 90 };
 
     Alien(Euclidean init, int tier, Properties prop) {
-        super(init, new Dimension(tiers[tier], tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);
+        super(init, new Dimension(Wave.tiers[tier], Wave.tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);
         this.value = Integer.valueOf(prop.getProperty("apoints"+tier));
         engine.v.y = speed;
         painter = new AlienPainter();
