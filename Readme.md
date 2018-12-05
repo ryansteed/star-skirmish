@@ -41,11 +41,10 @@ Build:
 <!-- - Add stars -->
 <!-- - Add sound effects -->
 <!-- - Make sure no alien spawn outside right bound -->
-- Instead of pausing, play death animation and make player immune for animation period
-- Fix hit boxes
+<!-- - Instead of pausing, play death animation and make player immune for animation period -->
+- Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
 - Javadoc annotations and refactor
 - Refactor to standard java directory (maven standard)
-- Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
 - Design document - star wars meets galaga
 
 Bonus (class Thursday):
