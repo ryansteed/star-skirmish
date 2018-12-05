@@ -179,7 +179,7 @@ class Player extends GameObject {
             if (lives > 0) {
                 immune = true;
 
-                int counts = ;
+                int counts = 9;
                 painter.setColor(new Color(254, 218, 74));
                 ActionListener removeImmunity = new ActionListener() {
                     private int counter;
