@@ -1,6 +1,7 @@
-import java.awt.Dimension;
+
 import java.util.Properties;
-import java.awt.Color;
+import java.util.Random;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.Area;
 import java.awt.Rectangle;
@@ -12,13 +13,14 @@ import java.awt.event.ActionEvent;
 import javax.swing.KeyStroke;
 
 // import javax.swing.BorderFactory;
+// import java.awt.Color;
 
 abstract class GameObject extends JComponent {
     static final long serialVersionUID = 1L;
     protected Dimension hitbox;
     protected int speed;
     protected Physics engine;
-    private Area boundary;
+    protected Area boundary;
     protected Painter painter;
     
     public GameObject(Euclidean init, Dimension hitbox, int speed, Area boundary) {
@@ -59,27 +61,31 @@ abstract class GameObject extends JComponent {
         if (inBounds) {
             setLocation(newPos.x, newPos.y);
         } else {
-            Rectangle bounds = boundary.getBounds();
-            int rightBound = (int) (bounds.getX() + bounds.getWidth());
-            if (newPos.x > rightBound) {
-                engine.v.x = 0;
-                engine.p.x = rightBound;
-            }
-            if (newPos.x < bounds.getX()) {
-                engine.v.x = 0;
-                engine.p.x = (int) bounds.getX();
-            }
-            int bottomBound = (int) (bounds.getY() + bounds.getHeight());
-            if (newPos.y > bottomBound) {
-                engine.v.y = 0;
-                engine.p.y = bottomBound;
-            }
-            if (newPos.y < bounds.getY()) {
-                engine.v.y = 0;
-                engine.p.y = (int) bounds.getX();
-            }
-            setLocation(engine.getX(), engine.getY());
+            handleOutOfBounds(newPos);
         }
+    }
+
+    protected void handleOutOfBounds(Euclidean newPos) {
+        Rectangle bounds = boundary.getBounds();
+        int rightBound = (int) (bounds.getX() + bounds.getWidth());
+        if (newPos.x > rightBound) {
+            engine.v.x = 0;
+            engine.p.x = rightBound;
+        }
+        if (newPos.x < bounds.getX()) {
+            engine.v.x = 0;
+            engine.p.x = (int) bounds.getX();
+        }
+        int bottomBound = (int) (bounds.getY() + bounds.getHeight());
+        if (newPos.y > bottomBound) {
+            engine.v.y = 0;
+            engine.p.y = bottomBound;
+        }
+        if (newPos.y < bounds.getY()) {
+            engine.v.y = 0;
+            engine.p.y = (int) bounds.getX();
+        }
+        setLocation(engine.getX(), engine.getY());
     }
     
     @Override
@@ -184,15 +190,50 @@ class Alien extends GameObject {
         engine.v.y = speed;
         painter = new AlienPainter();
     }
+}
 
-    // @Override
-    // public void paintComponent(Graphics g) {
-    //     super.paintComponent(g);
-    //     g.setColor(Color.green);
-    //     // https://stackoverflow.com/questions/2509561/how-to-draw-a-filled-circle-in-java
-    //     // Rectangle r = new Rectangle(engine.getX(), engine.getY(), (int)
-    //     // hitbox.getWidth(), (int) hitbox.getHeight());
-    //     // System.out.println(r);
-    //     g.fillRect(0, 0, (int) hitbox.getWidth(), (int) hitbox.getHeight());
-    // }
+class Star extends GameObject {
+    static final long serialVersionUID = 1L;
+
+    public Star(Euclidean init, Area boundary) {
+        super(init, randomDimension(), randomSpeed(), boundary);
+        engine.v.y = speed;
+        painter = new StarPainter();
+        engine.setMaxSpeed(null);
+    }
+
+    private static int randomSpeed() {
+        return new Random().nextInt(3) + 1;
+    }
+    private static Dimension randomDimension() {
+        int size = new Random().nextInt(3) + 5;
+        return new Dimension(size, size);
+    }
+
+    @Override
+    protected void handleOutOfBounds(Euclidean newPos) {
+        engine.p.y = 0;
+        engine.p.x = (int) (Math.random() * boundary.getBounds().getWidth());
+        // new speed
+        this.speed = speed + randomSpeed();
+        engine.v.y = speed;
+        // new size
+        this.hitbox = randomDimension();
+        setSize(hitbox);
+        setLocation(engine.getX(), engine.getY());
+    }
+
+    @Override
+    protected void update() {
+        super.update();
+
+        // elongate star based on speed
+        // funky lorentz transformation
+        // int c = 1;
+        // hitbox.setSize(
+        //     hitbox.getWidth(), 
+        //     hitbox.getHeight() * Math.sqrt(Math.pow(engine.v.x / c, 2)
+        // ));
+        setSize(hitbox);
+    }
 }

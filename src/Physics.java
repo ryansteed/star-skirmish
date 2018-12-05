@@ -19,7 +19,7 @@ class Physics {
         this.a = a;
         maxSpeed = null;
     }
-    protected void setMaxSpeed(int speed) {
+    protected void setMaxSpeed(Integer speed) {
         maxSpeed = speed;
     } 
     protected Euclidean move() {

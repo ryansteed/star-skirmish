@@ -10,15 +10,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import java.awt.geom.Area;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.awt.Dimension;
 import java.util.Properties;
 import java.io.InputStream;
 import java.io.FileInputStream;
@@ -32,6 +32,7 @@ public class GameEngine {
 
     private GameFrame frame;
     private ArrayList<GameObject> objects;
+    private ArrayList<Star> stars;
     private Player player;
     private Wave currentWave;
     private int score;
@@ -45,6 +46,7 @@ public class GameEngine {
     private AbstractAction start;
     private AbstractAction pause;
     private AbstractAction resume;
+    private AbstractAction hyperspace;
 
     public GameEngine() {
         loadProperties();
@@ -56,7 +58,9 @@ public class GameEngine {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame = new GameFrame(size, highscore);
-                frame.update(objects, 0, Integer.valueOf(prop.getProperty("plives")));
+                ArrayList<GameObject> activeObjects = new ArrayList<GameObject>(objects);
+                activeObjects.addAll(stars);
+                frame.update(activeObjects, 0, Integer.valueOf(prop.getProperty("plives")));
                 registerGameControls();
             }
         });
@@ -93,6 +97,7 @@ public class GameEngine {
     private void loadObjects() {
         // add initial game objects, like the player
         objects = new ArrayList<GameObject>();
+        stars = new ArrayList<Star>();
         // player
         Dimension playerSize = new Dimension(90, 90);
         Euclidean playerInit = new Euclidean((int) (size.getWidth() / 2 - playerSize.getWidth() / 2),
@@ -101,6 +106,18 @@ public class GameEngine {
                 (int) (yBound - playerSize.getHeight())));
         player = new Player(playerInit, playerSize, playerBoundary, 5, prop);
         objects.add(player);
+
+        // stars
+        for (int i=0; i<Integer.valueOf(prop.getProperty("stars")); i++) {
+            Euclidean init = new Euclidean(
+                (int) (Math.random() * GameEngine.size.getWidth()), 
+                (int) (Math.random() * GameEngine.size.getHeight())
+            );
+            stars.add(new Star(
+                init, 
+                new Area(new Rectangle(0, 0, (int) size.getWidth(), (int) yBound))
+            ));
+        }
     }
 
     class Update implements Runnable {
@@ -117,6 +134,7 @@ public class GameEngine {
                 }
                 activeObjects.addAll(currentWave.aliens);
             }
+            activeObjects.addAll(stars);
             frame.update(activeObjects, score, player.lives);
         }
     }
@@ -167,6 +185,7 @@ public class GameEngine {
             public void actionPerformed(ActionEvent e) {
                 setEnabled(false);
                 pause.setEnabled(true);
+                hyperspace.setEnabled(true);
 
                 score = 0;
                 player.reset(Integer.valueOf(prop.getProperty("plives")));
@@ -186,6 +205,7 @@ public class GameEngine {
                 setEnabled(false);
                 frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "resume");
                 resume.setEnabled(true);
+                hyperspace.setEnabled(false);
 
                 animationTimer.stop();
                 frame.menuView('p');
@@ -206,14 +226,29 @@ public class GameEngine {
         };
         frame.controller.getActionMap().put("resume", resume);
 
+        hyperspace = new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
+                System.out.println("Hyperspace mode");
+                for (Star star : stars) {
+                    star.engine.a.y = 1;
+                }
+            }
+        };
+        frame.controller.getActionMap().put("hyperspace", hyperspace);
+
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "start");
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "pause");
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), "hyperspace");
     }
 
     public void end() {
         animationTimer.stop();
         pause.setEnabled(false);
         resume.setEnabled(false);
+        hyperspace.setEnabled(false);
         start.setEnabled(true);
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "start");
         frame.menuView('e');

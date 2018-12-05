@@ -61,7 +61,7 @@ abstract class Painter {
         char[][] design = getDesign();
         
         for (int i=0; i<design.length; i++) {
-            pm[width / 2 - 1][i] = design[i][0];
+            pm[width / 2][i] = design[i][0];
         }
         for (int i=-1; i<2; i+=2) {
             // i is either +1 or -1
@@ -168,6 +168,25 @@ class AlienPainter extends Painter {
             {'e','e','e','e','e','e','g','b','b'},
             {'e','e','e','e','e','g','b','b'},
             { 'e', 'e', 'e', 'e', 'e', 'b', 'b'}
+        };
+        return design;
+    }
+}
+
+class StarPainter extends Painter {
+    public StarPainter() {
+        super(7, 7);
+    }
+
+    protected char[][] getDesign() {
+        char[][] design = { 
+            { 'b', 'e', 'e', 'e'},
+            { 'g', 'e', 'e', 'e'},
+            { 'w', 'g', 'e', 'e'},
+            { 'w', 'w', 'b', 'g'},
+            { 'w', 'g', 'e', 'e'},
+            { 'g', 'e', 'e', 'e'},
+            { 'b', 'e', 'e', 'e'},
         };
         return design;
     }
