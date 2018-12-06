@@ -83,7 +83,6 @@ class MetaOverlay extends Overlay {
     }
 
     protected void update(int score, int lives) {
-        System.out.println("updating...");
         this.score = score;
         this.lives = lives;
     }
@@ -102,12 +101,12 @@ class MetaOverlay extends Overlay {
             System.out.println("Instantiating life display with "+lives+" lives");
             this.iconWidth = iconWidth;
             painter = new ShipPainter();
-            setSize(new Dimension(iconWidth * lives * 5 / 4, iconWidth));
+            setSize(new Dimension(iconWidth * (lives-1) * 5 / 4, iconWidth));
         }
 
         @Override
         public void paintComponent(Graphics g) {
-            for (int i = 0; i < lives; i++) {
+            for (int i = 0; i < lives-1; i++) {
                 painter.paint(g, new Point(i * (iconWidth * 5 / 4), 0), new Dimension(iconWidth, iconWidth));
             }
         }
