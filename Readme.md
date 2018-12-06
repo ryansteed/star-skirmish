@@ -43,6 +43,7 @@ Build:
 <!-- - Make sure no alien spawn outside right bound -->
 <!-- - Instead of pausing, play death animation and make player immune for animation period -->
 - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
+    - Need to implement https://www.mkyong.com/java/java-read-a-file-from-resources-folder/ for resource file loading
 - Javadoc annotations and refactor
 - Refactor to standard java directory (maven standard)
 - Design document - star wars meets galaga
