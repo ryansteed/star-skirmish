@@ -15,6 +15,9 @@ import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 
+/**
+ * The container for the entire game view, including the object stage, the score overlay, and the menu overlay.
+ */
 public class GameFrame extends JFrame
 {
    static final long serialVersionUID = 1L;
@@ -23,7 +26,12 @@ public class GameFrame extends JFrame
    protected MetaOverlay overlay;
    protected GameController controller;
 
-   public GameFrame(Dimension size, int highscore)
+   /**
+    * Sets the metadata for the game view and instantiates the components.
+    * @param size The size of the game frame.
+    * @param highscore The current highscore loaded from memory.
+    */
+   public GameFrame(Dimension size, int highscore, int lives)
    {
       // get custom Galaga font
       try {
@@ -41,7 +49,7 @@ public class GameFrame extends JFrame
       setLayout(new OverlayLayout(getContentPane()));
 
       stage = new BackgroundOverlay(size);
-      overlay = new MetaOverlay(size, highscore);
+      overlay = new MetaOverlay(size, highscore, lives);
       controller = new GameController(size);
 
       add(controller);
@@ -53,10 +61,18 @@ public class GameFrame extends JFrame
       setVisible(true);
    }
 
+   /**
+    * Go to game view by removing all components from the menu overlay.
+    */
    protected void gameView() {
       controller.removeAll();
    }
    
+   /**
+    * Open up the menu view.
+    * 
+    * @param A character key representing the correct menu to display. 's': start; 'p': pause; 'e': end.
+    */
    protected void menuView(char menu) {
       switch (menu) {
          case 's': 
@@ -72,6 +88,13 @@ public class GameFrame extends JFrame
       }
    }
 
+   /**
+    * Update the game view.
+    * 
+    * @param objects GameObjects to include on the object stage.
+    * @param score The current score.
+    * @param lives The current number of player lives.
+    */
    protected void update(ArrayList<GameObject> objects, int score, int lives) {
       updateStage(objects);
       overlay.update(score, lives);

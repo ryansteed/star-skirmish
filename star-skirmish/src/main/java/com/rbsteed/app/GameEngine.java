@@ -83,7 +83,7 @@ public class GameEngine {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                frame = new GameFrame(size, highscore);
+                frame = new GameFrame(size, highscore, Integer.valueOf(prop.getProperty("plives")));
                 ArrayList<GameObject> activeObjects = new ArrayList<GameObject>(objects);
                 activeObjects.addAll(stars);
                 frame.update(activeObjects, 0, Integer.valueOf(prop.getProperty("plives")));

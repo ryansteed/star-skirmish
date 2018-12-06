@@ -38,17 +38,16 @@ class MetaOverlay extends Overlay {
     static final long serialVersionUID = 1L;
     private Score highscoreDisplay;
     protected int score;
-    protected int lives;
+    private int lives;
+    private Lives lifeDisplay;
     private Dimension dimension;
 
-    public MetaOverlay(Dimension dimension, int highscore) {
+    public MetaOverlay(Dimension dimension, int highscore, int lives) {
         super(dimension);
         this.dimension = dimension;
-        setBackground(new Color(0, 0, 0, 0));
+        this.lives = lives;
 
-        Lives lifeDisplay = new Lives(lives);
-        lifeDisplay.setLocation(0, (int) (dimension.getHeight() - GameEngine.vertOffset - lifeDisplay.getHeight()));
-        add(lifeDisplay);
+        setBackground(new Color(0, 0, 0, 0));
 
         // Score scoreDisplay = new Score(score);
         score = 0;
@@ -69,6 +68,10 @@ class MetaOverlay extends Overlay {
             0
         );
         add(highscoreLabel);
+
+        lifeDisplay = new Lives();
+        lifeDisplay.setLocation(0, (int) (dimension.getHeight() - GameEngine.vertOffset - lifeDisplay.getHeight()));
+        add(lifeDisplay);
     }
     protected void updateHighscore(int highscore) {
         remove(highscoreDisplay);
@@ -80,24 +83,25 @@ class MetaOverlay extends Overlay {
     }
 
     protected void update(int score, int lives) {
+        System.out.println("updating...");
         this.score = score;
         this.lives = lives;
     }
 
     class Lives extends JComponent {
         static final long serialVersionUID = 1L;
-        protected int lives;
         private int iconWidth;
-        ShipPainter painter;
 
-        Lives(int lives) {
-            this(lives, 25);
-            painter = new ShipPainter();
+        private ShipPainter painter;
+
+        Lives() {
+            this(25);
         }
 
-        Lives(int lives, int iconWidth) {
-            this.lives = lives;
+        Lives(int iconWidth) {
+            System.out.println("Instantiating life display with "+lives+" lives");
             this.iconWidth = iconWidth;
+            painter = new ShipPainter();
             setSize(new Dimension(iconWidth * lives * 5 / 4, iconWidth));
         }
 

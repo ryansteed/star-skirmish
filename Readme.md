@@ -48,7 +48,7 @@ Build:
 - Javadoc annotations and refactor - https://www.tutorialspoint.com/java/java_documentation.htm
 - Design document - star wars meets galaga
 - Wrap up all code TODOs
-    - Add incremental speed up for aliens as well as increase in number - make this a property
+    <!-- - Add incremental speed up for aliens as well as increase in number - make this a property -->
 
 Bonus (class Thursday):
 - Build a player missile
