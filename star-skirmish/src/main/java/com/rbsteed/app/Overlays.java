@@ -70,7 +70,7 @@ class MetaOverlay extends Overlay {
         highscoreDisplay.setLocation((int) (dimension.getWidth() / 2 - highscoreDisplay.getWidth() / 2),
                 (int) (highscoreDisplay.getHeight()));
         add(highscoreDisplay);
-        repaint();
+        highscoreDisplay.repaint();
     }
 
     protected void update(int score, int lives) {

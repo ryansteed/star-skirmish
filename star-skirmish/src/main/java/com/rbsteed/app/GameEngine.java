@@ -56,7 +56,6 @@ public class GameEngine {
         
         setTimer();
         loadObjects();
-        setShutdownHook();
 
         // All sound effects royalty-free from
         // https://downloads.khinsider.com/game-soundtracks/album/galaga-arcade
@@ -86,17 +85,6 @@ public class GameEngine {
                 }
             }
         });
-    }
-
-    private void setShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                storeHighscore();
-                // uses Java preferences API
-                // http://www.vogella.com/tutorials/JavaPreferences/article.html
-                prefs.put("highscore", Integer.toString(highscore));
-            }
-        }, "shutdown-thread"));
     }
 
     private void storeHighscore() {
@@ -249,9 +237,18 @@ public class GameEngine {
         };
         frame.controller.getActionMap().put("hyperspace", hyperspace);
 
+        frame.controller.getActionMap().put("resetHighscore", new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setHighscore(0);
+            }
+        });
+
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "start");
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "pause");
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), "hyperspace");
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "resetHighscore");
     }
 
     public void end() {
@@ -268,14 +265,19 @@ public class GameEngine {
         if (score > highscore) {
             Sound clearedSound = new Sound("stage.wav");
             clearedSound.play();
-            highscore = score;
-            frame.overlay.updateHighscore(highscore);
+            setHighscore(score);
         }
         else {
             // play ending sound effect
             Sound endSound = new Sound("scream.wav");
             endSound.play();
         }
+    }
+
+    private void setHighscore(int score) {
+        highscore = score;
+        prefs.put("highscore", Integer.toString(highscore));
+        frame.overlay.updateHighscore(highscore);
     }
     
 }
