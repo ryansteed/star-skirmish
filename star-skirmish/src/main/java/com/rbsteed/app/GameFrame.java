@@ -1,3 +1,9 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
 import java.util.ArrayList;
@@ -8,7 +14,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
-import java.io.File;
 
 public class GameFrame extends JFrame
 {

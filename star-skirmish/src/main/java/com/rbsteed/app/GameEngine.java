@@ -1,3 +1,9 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
 import javax.swing.SwingUtilities;
@@ -15,12 +21,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.File;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
+/**
+ * The GameEngine manages all game controls. It manages the view and the game
+ * objects . It also contains the endpoints available to the user. The
+ * GameEngine uses a static properties file as well as a preferences backend for
+ * configuration.
+ * 
+ * @see GameObject
+ * @see Properties
+ * @see GameController
+ * @see Preferences
+ * @see GameFrame
+ */
 public class GameEngine {
     // properties
     protected static Properties prop;
@@ -47,6 +62,10 @@ public class GameEngine {
     private Sound mainMusic;
     private Sound introMusic;
 
+    /**
+     * Prepares the game for playing, opening with a start menu and background music.
+     * Also registers game controls.
+     */
     public GameEngine() {
         loadProperties();
         
@@ -74,6 +93,11 @@ public class GameEngine {
         });
     }
 
+    /**
+     * Sets the main animation timer.
+     * 
+     * @see Timer
+     */
     private void setTimer() {
         animationTimer = new Timer(Integer.parseInt((prop.getProperty("cycle"))), new ActionListener() {
             @Override
@@ -87,10 +111,13 @@ public class GameEngine {
         });
     }
 
-    private void storeHighscore() {
-        
-    }
-
+    /**
+     * Loads objects that appear before the game is started: player and stars.
+     * Objects are stored in an instance-level array list.
+     * 
+     * @see Player
+     * @see Star
+     */
     private void loadObjects() {
         // add initial game objects, like the player
         objects = new ArrayList<GameObject>();
@@ -106,6 +133,10 @@ public class GameEngine {
         loadStars();  
     }
 
+    /**
+     * Creates new stars and adds to game view. 
+     * @see Star
+     */
     private void loadStars() {
         stars = new ArrayList<Star>();
         // stars
@@ -116,12 +147,19 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Resets stars for a new game. (Stars pick up speed over the course of a game).
+     */
     private void resetStars() {
         for (Star star : stars) {
             star.reset();
         }
     }
 
+    /**
+     * Update is a runnable that conducts the frame-by-frame processes required to operate
+     * the game, including collision checking, wave updating, and updating the game frame.
+     */
     class Update implements Runnable {
         public void run() {
             // System.out.println("Cycle");
@@ -131,8 +169,10 @@ public class GameEngine {
                 score += currentWave.update();
                 if (currentWave.cleared()) {
                     score += 1;
-                    // TODO: make this increment a property
-                    currentWave = new Wave(currentWave.number + 1);
+                    currentWave = new Wave(
+                        currentWave.number + Integer.valueOf(prop.getProperty("sizeup")), 
+                        currentWave.speed + Integer.valueOf(prop.getProperty("speedup"))
+                    );
                 }
                 activeObjects.addAll(currentWave.aliens);
             }
@@ -140,6 +180,10 @@ public class GameEngine {
             frame.update(activeObjects, score, player.lives);
         }
         
+        /**
+         * Check for collisions between aliens and the player. If collisions, take a 
+         * life. End the game if the player is dead.
+         */
         private void checkCollisions() {
             Iterator<Alien> iter = currentWave.iterAliens();
             while (iter.hasNext()) {
@@ -154,6 +198,10 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Load developer defined properties from a properties file.
+     * @see Properties
+     */
     private void loadProperties() {
         prop = new Properties();
         InputStream input = null;
@@ -173,66 +221,42 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Bind basic game controls to keys using custom abstract action.
+     */
     private void registerGameControls() {
-        start = new AbstractAction() {
+        start = new KeyAction() {
             static final long serialVersionUID = 1L;
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setEnabled(false);
-                pause.setEnabled(true);
-                hyperspace.setEnabled(true);
-
-                score = 0;
-                resetStars();
-                player.reset(Integer.valueOf(prop.getProperty("plives")));
-                // first wave
-                // TODO: make these parameters into properties
-                currentWave = new Wave(5);
-                frame.gameView();
-                introMusic.stop();
-                mainMusic.loop();
-                animationTimer.start();
+            public void run() {
+                start();
             }
         };
         frame.controller.getActionMap().put("start", start);
 
-        pause = new AbstractAction() {
+        pause = new KeyAction() {
             static final long serialVersionUID = 1L;
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setEnabled(false);
-                frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "resume");
-                resume.setEnabled(true);
-                hyperspace.setEnabled(false);
-
-                animationTimer.stop();
-                frame.menuView('p');
+            public void run() {
+                pause();
             }
         };
         frame.controller.getActionMap().put("pause", pause);
 
-        resume = new AbstractAction() {
+        resume = new KeyAction() {
             static final long serialVersionUID = 1L;
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setEnabled(false);
-                pause.setEnabled(true);
-
-                frame.gameView();
-                animationTimer.start();
+            public void run() {
+                resume();
             }
         };
         frame.controller.getActionMap().put("resume", resume);
 
-        hyperspace = new AbstractAction() {
+        hyperspace = new KeyAction() {
             static final long serialVersionUID = 1L;
             @Override
-            public void actionPerformed(ActionEvent e) {
-                setEnabled(false);
-                System.out.println("Easter egg: hyperspace mode!");
-                for (Star star : stars) {
-                    star.engine.a.y = 1;
-                }
+            public void run() {
+                hyperspace();
             }
         };
         frame.controller.getActionMap().put("hyperspace", hyperspace);
@@ -251,6 +275,69 @@ public class GameEngine {
         frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "resetHighscore");
     }
 
+    /**
+     * Class for actions on key bindings. Once triggered, disables itself until enabled
+     * again by another action.
+     */
+    abstract class KeyAction extends AbstractAction {
+        static final long serialVersionUID = 1L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setEnabled(false);
+            run();
+        }
+        abstract protected void run();
+    }
+
+    /**
+     * Start the game (from the start or end menu).
+     */
+    private void start() {
+        pause.setEnabled(true);
+        hyperspace.setEnabled(true);
+
+        score = 0;
+        resetStars();
+        player.reset(Integer.valueOf(prop.getProperty("plives")));
+        // first wave
+        currentWave = new Wave(Integer.valueOf(prop.getProperty("initwavesize")), 0);
+        frame.gameView();
+        introMusic.stop();
+        mainMusic.loop();
+        animationTimer.start();
+    }
+    /**
+     * Pause the game during play.
+     */
+    private void pause() {
+        frame.controller.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("SPACE"), "resume");
+        resume.setEnabled(true);
+        hyperspace.setEnabled(false);
+        animationTimer.stop();
+        frame.menuView('p');
+    }
+    /**
+     * Resume the game after pausing.
+     */
+    private void resume() {
+        pause.setEnabled(true);
+        frame.gameView();
+        animationTimer.start();
+    }
+
+    private void hyperspace() {
+        System.out.println("Easter egg: hyperspace mode!");
+        for (Star star : stars) {
+            star.engine.a.y = 1;
+        }
+    }
+
+    /**
+     * End the game and show game over menu. If a new highscore, write to a hidden
+     * persistent configuration backend using Preferences API.
+     * @see Preferences
+     */
     public void end() {
         mainMusic.stop();
         animationTimer.stop();
@@ -274,6 +361,10 @@ public class GameEngine {
         }
     }
 
+    /**
+     * Set the new high score and update the scoreboard.
+     * @param score The new high score.
+     */
     private void setHighscore(int score) {
         highscore = score;
         prefs.put("highscore", Integer.toString(highscore));

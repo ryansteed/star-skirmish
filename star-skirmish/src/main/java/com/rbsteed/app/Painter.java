@@ -1,3 +1,9 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
 import java.awt.Graphics;
@@ -6,7 +12,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Color;
-import java.lang.Math;
 
 
 abstract class Painter {

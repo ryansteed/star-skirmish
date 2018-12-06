@@ -1,3 +1,9 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
 import java.util.Properties;
@@ -229,10 +235,10 @@ class Alien extends GameObject {
     static final long serialVersionUID = 1L;
     protected int value;
 
-    Alien(Euclidean init, int tier, Properties prop) {
+    Alien(Euclidean init, int tier, int baseSpeed, Properties prop) {
         super(init, new Dimension(Wave.tiers[tier], Wave.tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);
         this.value = Integer.valueOf(prop.getProperty("apoints"+tier));
-        engine.v.y = speed;
+        engine.v.y = speed + baseSpeed;
         painter = new AlienPainter();
     }
 }

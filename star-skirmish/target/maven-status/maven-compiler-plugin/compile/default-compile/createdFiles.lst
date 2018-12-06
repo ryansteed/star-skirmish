@@ -9,6 +9,7 @@ com/rbsteed/app/Star.class
 com/rbsteed/app/GameEngine$5.class
 com/rbsteed/app/MetaOverlay$Lives.class
 com/rbsteed/app/GameEngine$2.class
+com/rbsteed/app/GameEngine$KeyAction.class
 com/rbsteed/app/BackgroundOverlay.class
 com/rbsteed/app/MetaOverlay$Score.class
 com/rbsteed/app/GameEngine$7.class

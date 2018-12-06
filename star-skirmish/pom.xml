@@ -4,7 +4,7 @@
   <groupId>com.rbsteed.app</groupId>
   <artifactId>star-skirmish</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>StarSkirmish</name>
   <url>https://rbsteed.com</url>
   <!-- <properties>
@@ -46,6 +46,20 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>3.1.0</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.1</version>
+      </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

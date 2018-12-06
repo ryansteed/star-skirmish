@@ -1,6 +1,11 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.BufferedInputStream;
 import javax.sound.sampled.AudioInputStream;

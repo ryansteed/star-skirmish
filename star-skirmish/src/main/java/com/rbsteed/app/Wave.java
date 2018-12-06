@@ -1,3 +1,9 @@
+/**
+ * @author Ryan Steed
+ * @version 1.0
+ * @since 2018-12-06
+ */
+
 package com.rbsteed.app;
 
 import java.util.ArrayList;
@@ -7,11 +13,13 @@ import java.util.Random;
 class Wave {
     protected ArrayList<Alien> aliens;
     protected int number;
+    protected int speed;
     protected static int[] tiers = { 30, 60, 90 };
 
-    Wave(int number) {
+    Wave(int number, int speed) {
         this.aliens = new ArrayList<Alien>();
         this.number = number;
+        this.speed = speed;
         addNewAliens(number);
     }
 
@@ -51,7 +59,7 @@ class Wave {
         Euclidean alienInit = new Euclidean(initX, initY);
         // TODO: use normal dist to choose tier level based on wave difficulty
         // https://stackoverflow.com/questions/6011943/java-normal-distribution
-        return new Alien(alienInit, tier, GameEngine.prop);
+        return new Alien(alienInit, tier, speed, GameEngine.prop);
     }
 
     protected boolean cleared() {

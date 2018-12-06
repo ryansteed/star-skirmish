@@ -42,11 +42,13 @@ Build:
 <!-- - Add sound effects -->
 <!-- - Make sure no alien spawn outside right bound -->
 <!-- - Instead of pausing, play death animation and make player immune for animation period -->
-- Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
-    - Need to implement https://www.mkyong.com/java/java-read-a-file-from-resources-folder/ for resource file loading
-- Javadoc annotations and refactor
-- Refactor to standard java directory (maven standard)
+<!-- - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
+    - Refactor to standard java directory (maven standard)
+    - Need to implement https://www.mkyong.com/java/java-read-a-file-from-resources-folder/ for resource file loading -->
+- Javadoc annotations and refactor - https://www.tutorialspoint.com/java/java_documentation.htm
 - Design document - star wars meets galaga
+- Wrap up all code TODOs
+    - Add incremental speed up for aliens as well as increase in number - make this a property
 
 Bonus (class Thursday):
 - Build a player missile
