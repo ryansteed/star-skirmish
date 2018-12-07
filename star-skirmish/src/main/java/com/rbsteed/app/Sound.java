@@ -12,9 +12,18 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+/**
+ * Plays sound clips, once or on a loop.
+ */
 public class Sound {
     private Clip clip;
 
+    /**
+     * Uses the maven resource holder system to locate a sound resource input stream and create an
+     * audio player with the Clip API.
+     * @param name The relative path to the audio file within the resources folder.
+     * @see Clip
+     */
     public Sound(String name) {
         // https://stackoverflow.com/questions/11919009/using-javax-sound-sampled-clip-to-play-loop-and-stop-mutiple-sounds-in-a-game
         try {
@@ -28,13 +37,22 @@ public class Sound {
             e.printStackTrace();
         }
     }
+    /**
+     * Start playing the sound clip.
+     */
     public void play() {
         clip.setFramePosition(0); // Must always rewind!
         clip.start();
     }
+    /**
+     * Loop the sound clip.
+     */
     public void loop() {
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
+    /**
+     * Stop playing the sound clip.
+     */
     public void stop() {
         clip.stop();
     }

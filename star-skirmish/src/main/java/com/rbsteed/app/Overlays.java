@@ -15,6 +15,9 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * A view that overlays text and metadata on top of the main game stage.
+ */
 abstract class Overlay extends JPanel {
     static final long serialVersionUID = 1L;
 
@@ -24,7 +27,20 @@ abstract class Overlay extends JPanel {
         setVisible(true);
     }
 }
+/**
+ * A transparent overlay.
+ */
+abstract class TransparentOverlay extends Overlay {
+    static final long serialVersionUID = 1L;
+    public TransparentOverlay(Dimension dimension) {
+        super(dimension);
+        setBackground(new Color(0, 0, 0, 0));
+    }
+}
 
+/**
+ * The vast, black void of space.
+ */
 class BackgroundOverlay extends Overlay {
     static final long serialVersionUID = 1L;
 
@@ -34,7 +50,11 @@ class BackgroundOverlay extends Overlay {
     }
 }
 
-class MetaOverlay extends Overlay {
+/**
+ * An overlay with the score, high score, and remaining player lives.
+ * Also displays any in-game messages.
+ */
+class MetaOverlay extends TransparentOverlay {
     static final long serialVersionUID = 1L;
     private Score highscoreDisplay;
     protected int score;
@@ -42,12 +62,17 @@ class MetaOverlay extends Overlay {
     private Lives lifeDisplay;
     private Dimension dimension;
 
+    /**
+     * Instantiate a meta overlay with current score, high score display from memory,
+     * and icons representing the number of lives remaining.
+     * @param dimension The size of the overlay (usually the game frame size).
+     * @param highscore The current highscore.
+     * @param lives The starting number of lives.
+     */
     public MetaOverlay(Dimension dimension, int highscore, int lives) {
         super(dimension);
         this.dimension = dimension;
         this.lives = lives;
-
-        setBackground(new Color(0, 0, 0, 0));
 
         // Score scoreDisplay = new Score(score);
         score = 0;
@@ -73,6 +98,10 @@ class MetaOverlay extends Overlay {
         lifeDisplay.setLocation(0, (int) (dimension.getHeight() - GameEngine.vertOffset - lifeDisplay.getHeight()));
         add(lifeDisplay);
     }
+    /**
+     * Update the highscore display.
+     * @param highscore The current highscore.
+     */
     protected void updateHighscore(int highscore) {
         remove(highscoreDisplay);
         highscoreDisplay = new Score(highscore);
@@ -82,11 +111,20 @@ class MetaOverlay extends Overlay {
         highscoreDisplay.repaint();
     }
 
+    /**
+     * Update the overlay with a new score and number of lives remaining. Occurs every
+     * frame.
+     * @param score
+     * @param lives
+     */
     protected void update(int score, int lives) {
         this.score = score;
         this.lives = lives;
     }
 
+    /**
+     * A special component for displaying the number of lives as icons.
+     */
     class Lives extends JComponent {
         static final long serialVersionUID = 1L;
         private int iconWidth;
@@ -97,14 +135,23 @@ class MetaOverlay extends Overlay {
             this(25);
         }
 
+        /**
+         * Set the size to be as long as the number of icons to display, and use the
+         * same painter as is used for the player.
+         * @param iconWidth
+         */
         Lives(int iconWidth) {
-            System.out.println("Instantiating life display with "+lives+" lives");
             this.iconWidth = iconWidth;
             painter = new ShipPainter();
             setSize(new Dimension(iconWidth * (lives-1) * 5 / 4, iconWidth));
         }
 
         @Override
+        /**
+         * Paint as many icons as there are lives.
+         * 
+         * @param g The graphics for this component.
+         */
         public void paintComponent(Graphics g) {
             for (int i = 0; i < lives-1; i++) {
                 painter.paint(g, new Point(i * (iconWidth * 5 / 4), 0), new Dimension(iconWidth, iconWidth));
@@ -112,6 +159,9 @@ class MetaOverlay extends Overlay {
         }
     }
 
+    /**
+     * A special label for displaying scores.
+     */
     class Score extends Label {
         static final long serialVersionUID = 1L;
 
@@ -123,6 +173,9 @@ class MetaOverlay extends Overlay {
         }
     }
 
+    /**
+     * A special singleton score display that updates with the current score.
+     */
     class CurrentScore extends Score {
         static final long serialVersionUID = 1L;
 
@@ -135,6 +188,10 @@ class MetaOverlay extends Overlay {
             updateText();
             super.paintComponent(g);
         }
+
+        /**
+         * Update the size and text with the new score.
+         */
         private void updateText() {
             setText(formatScore(score));
             setSize(getPreferredSize());
@@ -142,14 +199,18 @@ class MetaOverlay extends Overlay {
     }
 }
 
-class GameController extends Overlay {
+/**
+ * A special overlay that displays the menu (and holds the bindings for
+ * game controls).
+ * @see GameEngine
+ */
+class GameController extends TransparentOverlay {
     static final long serialVersionUID = 1L;
     private Dimension size;
 
     public GameController(Dimension dimension) {
         super(dimension);
         size = dimension;
-        setBackground(new Color(0, 0, 0, 0));
     }
 
     protected void startMenu() {
@@ -160,6 +221,12 @@ class GameController extends Overlay {
         makeMenuText("<html><center>[SPACE] Resume</center></html>", false);
     }
 
+    /**
+     * Displays the menu text for a given menu view. Also includes the game title if
+     * needed.
+     * @param html The html structure of the menu text.
+     * @param includeTitle Whether or not to include the game title.
+     */
     private void makeMenuText(String html, boolean includeTitle) {
         removeAll();
         Label title = new Label(includeTitle ? "Star Skirmish" : "" , new Color(254,218,74));
@@ -177,6 +244,9 @@ class GameController extends Overlay {
     }
 }
 
+/**
+ * A special label that adds color and a custom font for game text.
+ */
 class Label extends JLabel {
     static final long serialVersionUID = 1L;
 

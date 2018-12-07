@@ -13,7 +13,9 @@ import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Color;
 
-
+/**
+ * Paints a given pixel map based on a 2d array. (Ugh. This was a tedious implementation).
+ */
 abstract class Painter {
     private Graphics2D g2;
     private Point origin;
@@ -32,6 +34,12 @@ abstract class Painter {
         pmap = getPixelMap();
     }
 
+    /**
+     * Paint this object based on the 2d color coded pixel map.
+     * @param g The graphics given for this object (different at each render).
+     * @param givenOrigin The proper origin of the object to be painted.
+     * @param size The size of the object to be painted.
+     */
     protected void paint(Graphics g, Point givenOrigin, Dimension size) {
         this.g2 = (Graphics2D) g;
         origin = givenOrigin;
@@ -58,6 +66,12 @@ abstract class Painter {
         return;
     }
 
+    /**
+     * Paint a pixel by constructing a rectangle at the given location.
+     * Location is determined by mapping a grid onto the available space.
+     * @param loc The proper location within the grid.
+     * @param color The color of the pixel.
+     */
     private void paintPixel(Point loc, Color color) {
         g2.setColor(color);
 
@@ -66,6 +80,11 @@ abstract class Painter {
         // g2.fillRect(origin.x + loc.x * pixelSize, origin.y + loc.y * pixelSize, pixelSize, pixelSize);
     }
 
+    /**
+     * Generate the pixel map from half of a given design by coping the first row and mirroring
+     * the rest.
+     * @return A 2d array containing characters representing pixel color. Empty pixels are 'e' or empty.
+     */
     private char[][] getPixelMap() {
         char[][] pm = new char[width][height];
         char[][] design = getDesign();
@@ -91,6 +110,13 @@ abstract class Painter {
         colorOverride = color;
     }
 
+    /**
+     * If there is no color override, get the proper color given a character color code
+     * from the pixel map.
+     * @param c The character color code.
+     * @return The correct color.
+     * @see Color
+     */
     protected Color getColor(char c) {
         if (colorOverride == null) {
             Color color = Color.white;
@@ -112,16 +138,27 @@ abstract class Painter {
         return colorOverride;
     }
 
+    /**
+     * A method for getting the right design for this object. Extended by various painters.
+     * @return A 2d array representing half the pixel map. The other half is produced by mirroring.
+     */
     protected abstract char[][] getDesign();
 
+    /**
+     * Produce the mirrored column number.
+     * @param i Which side is being mapped (i==1 || i==-1).
+     * @param x The length of the 2d array.
+     * @return The correct mirrored column number.
+     */
     private int mirrorCol(int i, int x) {
         return i*x+width/2;
     }
 }
 
+/**
+ * Paints the player's ship - an X-Wing!
+ */
 class ShipPainter extends Painter {
-
-    private Color colorOverride;
     
     public ShipPainter() {
         super(23, 25);
@@ -161,6 +198,9 @@ class ShipPainter extends Painter {
     }
 }
 
+/**
+ * Paints the alien's ship - a TIE fighter!
+ */
 class AlienPainter extends Painter {
 
     public AlienPainter() {
@@ -192,6 +232,9 @@ class AlienPainter extends Painter {
     }
 }
 
+/** 
+ * Paints a background star.
+ */
 class StarPainter extends Painter {
     public StarPainter() {
         super(7, 7);

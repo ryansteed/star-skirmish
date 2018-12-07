@@ -30,6 +30,7 @@ public class GameFrame extends JFrame
     * Sets the metadata for the game view and instantiates the components.
     * @param size The size of the game frame.
     * @param highscore The current highscore loaded from memory.
+    * @param lives The starting number of player lives.
     */
    public GameFrame(Dimension size, int highscore, int lives)
    {
@@ -71,7 +72,7 @@ public class GameFrame extends JFrame
    /**
     * Open up the menu view.
     * 
-    * @param A character key representing the correct menu to display. 's': start; 'p': pause; 'e': end.
+    * @param menu A character key representing the correct menu to display. 's': start; 'p': pause; 'e': end.
     */
    protected void menuView(char menu) {
       switch (menu) {
@@ -102,6 +103,10 @@ public class GameFrame extends JFrame
       this.repaint();
    }
 
+   /**
+    * Update the object stage by removing all objects and adding the new set of objects.
+    * @param objects The objects to add.
+    */
    private void updateStage(ArrayList<GameObject> objects) {
       stage.removeAll();
       for (GameObject object : objects) {

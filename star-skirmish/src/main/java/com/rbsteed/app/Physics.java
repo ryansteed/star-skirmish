@@ -8,6 +8,9 @@ package com.rbsteed.app;
 
 import java.lang.Math;
 
+/**
+ * A physics engine for calculating object position at a given iteration.
+ */
 class Physics {
     protected Euclidean p;
     protected Euclidean v;
@@ -21,6 +24,12 @@ class Physics {
     protected Physics(Euclidean p, Euclidean v) {
         this(p, v, new Euclidean(0, 0));
     }
+    /**
+     * Create a new engine with a starting position, velocity, and acceleration.
+     * @param p Position.
+     * @param v Velocity.
+     * @param a Acceleration.
+     */
     protected Physics(Euclidean p, Euclidean v, Euclidean a) {
         this.p = p;
         this.v = v;
@@ -30,6 +39,10 @@ class Physics {
     protected void setMaxSpeed(Integer speed) {
         maxSpeed = speed;
     } 
+    /**
+     * Iterate the object position, velocity, and acceleration with a Eulerian parametric calculation.
+     * @return The new position.
+     */
     protected Euclidean move() {
         // velocity change only if under max object speed
         if (maxSpeed == null || maxSpeed > Math.sqrt(Math.pow((v.x + a.x), 2) + Math.pow((v.y + a.y), 2))) {
@@ -49,6 +62,11 @@ class Physics {
     }
 }
 
+/**
+ * A convenient container class for any physics data with components. In our 2d (Euclidean) environment,
+ * position, velocity, and acceleration all have x and y components.
+ * @see Physics
+ */
 class Euclidean {
     protected int x;
     protected int y;
