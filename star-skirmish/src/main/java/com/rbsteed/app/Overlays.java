@@ -214,11 +214,11 @@ class GameController extends TransparentOverlay {
     }
 
     protected void startMenu() {
-        makeMenuText("<html>[SPACE] Start<br><br>&nbsp;[ESC] &nbsp;Pause</html>", true);
+        makeMenuText("<html><center>[F] Fire</center><br><center>[ESC] Pause</center><br><br><center style='color: #4bd5ee'>[SPACE] Start</center></html>", true);
     }
     
     protected void pauseMenu() {
-        makeMenuText("<html><center>[SPACE] Resume</center></html>", false);
+        makeMenuText("<html><center>[F] Fire</center><br><center style='color: #4bd5ee'>[SPACE] Resume</center></html>", false);
     }
 
     /**
@@ -240,7 +240,7 @@ class GameController extends TransparentOverlay {
     }
 
     protected void endMenu() {
-        makeMenuText("<html><center><p style='color: #2719C7'>Game Over</p>  <br><br>[SPACE] New Game</center></html>", true);
+        makeMenuText("<html><center><br><p style='color: #4bd5ee'>Game Over</p>  <br><br>[SPACE] New Game</center></html>", true);
     }
 }
 
