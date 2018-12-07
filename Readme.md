@@ -1,97 +1,55 @@
-# CSCI 2113.11 - Fall 2018 Project 2 (100 pts) - Due December 6 at 11:59PM
+# Star Skirmish V1.0 Design Document
 
+Author: Ryan Steed
 
-## Name: Ryan Steed
+Release: 12-06-2018
 
-## GWID: G49358053
+Developer Hours: 29
 
-## Instructions
+## Controls
 
-Clone this repository and develop the Alien Attack game on your own. Do not copy any additional source code from the Internet other than the code from the Project 2 repository. Use the Project 2 documentation on Blackboard as your requirements. 
+Move the player:
+|   | ↑ |   |
+|---|---|---|
+| ← |   | → |
+|   | ↓ |   |
 
-Note: The Project 2 requirements may change during the development of the project based on student feedback.
+Fire: F
 
-## Comments and Notes
+Start/Resume: SPACE
 
-## Notes for the Grader
+Pause: ESC
 
-I hope you will accept one of the many additional features I added as my "Developer's Choice" extra credit. (For example, immunity after death, music, background stars, the "lives remaining" display, the awesome physics engine, the beauitful pixelated designs, etc.)
+Reset Highscore: R
 
-I decided not to include elapsed time because it ruins the aesthetic, and I only included one top highscore because I didn't want to pollute the end screen with additional scores when this will likely be distributed as a game with only one individual user - feel free to dock me.
+## Aesthetic
 
-I also don't like running the game on the recommended low FPS. My code is efficient enough to handle a higher FPS and the game looks so much nicer. My default is 50.
+Star Wars meets Galaga in this arcade-style 2D space scroller, **Star Skirmish**.
 
-<!-- ### TODO
-A good design reference: http://zetcode.com/tutorials/javagamestutorial/collision/
+Fly your X-Wing across a beautiful starscape, blasting the Death Star's TIE fighters. Earn points for every enemy avoided and become strong in the Force.
 
-Build: -->
-<!-- - Implement game controller skeleton, holding a list of gameobjects -->
-<!-- - Implement black background (board) based on exercise 8, leaving room for a score -->
-<!-- - Build a basic player by modifying game piece from exercise 8 - start with a blue square -->
-<!-- - Build basic aliens based on GameObject abstract - start with a green square -->
-<!-- - Package aliens into waves -->
-<!-- - Create automatic alien movement with PhysicsEngine, instantiate with waves (of a certain speed) -->
-<!-- - Create user-controlled motion for player with PhysicsEngine -->
-<!-- - Add boundaries to user motion -->
-<!-- - Display a score - +1 for every alien passed -->
-<!-- - Add collisions & count lives beside score 
-    - use rectangle contact boxes - then .intersect is handy for comparing positions -->
-<!-- - Create more waves of aliens moving at increasing speeds -->
-<!-- - Game controls
-    - Construct meta overlay
-        - Lives
-        - Current Score
-        - High score
-    - Player size depends on number of lives
-    - Key bindings to start, pause, reset -->
-<!-- - Design player appearance -->
-<!-- - Design alien appearance -->
-<!-- - Add stars -->
-<!-- - Add sound effects -->
-<!-- - Make sure no alien spawn outside right bound -->
-<!-- - Instead of pausing, play death animation and make player immune for animation period -->
-<!-- - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
-    - Refactor to standard java directory (maven standard)
-    - Need to implement https://www.mkyong.com/java/java-read-a-file-from-resources-folder/ for resource file loading -->
-<!-- - Javadoc annotations and refactor - https://www.tutorialspoint.com/java/java_documentation.htm -->
-<!-- - Design document - star wars meets galaga -->
-<!-- - Wrap up all code TODOs
-    - Add incremental speed up for aliens as well as increase in number - make this a property -->
+Turn on your sound to hear the original NAMCO Galaga soundtrack and sound effects.
 
-<!-- Bonus (class Thursday):
-- Build a player missile
-- Add death star animation to game over screen
-- Other bonus features -->
+## Game
 
-<!-- ### Class Notes 19Nov18
-Problem with repainting on interval - what if multiple inputs within the interval?
+The player's ship is operated with real physics! Use the arrow keys to fire the engines and accelerate the vehicle. Watch out - there's no friction in space.
 
-- Why not repaint components separately, on command? e.g. player only repaints on input, other game objects repaint on interval
-> Because then it will be impossible to accurately assess collisions
-- Solution: pause main interval in favor of local interval
+The game sends enemies in waves, which increase in size and speed as the player progresses. Passing enemies accrues points based on enemy size.
 
-How to assess collisions? Keep game objects in sorted data structure, for quick querying?
+The player loses a life if the ship collides with an enemy, but has a brief immunity period after death to recover. The number of lives is displayed in the bottom left corner.
 
-`SwingUtilities.invokeLater`
+The player can shoot enemies, but the smaller the ship gets, the weaker the shots. Larger enemies take more shots to kill than smaller enemies.
 
-Design document: how to play the game, design decisions made
+Game configurations can be edited in the `resources/StarSkirmish.properties` file.
 
-A useful reference: http://zetcode.com/tutorials/javagamestutorial/spaceinvaders/ -->
+## Software
 
-## Grading Rubric
+The software class design can be viewed in `StarSkirmish.class.violet.html`.
 
-Project details | Points | Score
----|:---:|:---:
-Compiles successfully.|10|[GA entry]
-Well commented and documented code.|15|[GA entry]
-Class diagram. |15|[GA entry]
-Basic game display.|5|[GA entry]
-Aliens Display and Movement|20|[GA entry]
-Player movement movement|20|[GA entry]
-Game Mechanics (scoring, dying, speed-up)|25|[GA entry]
-Satisfaction of Design Requirements|25|[GA entry]
-Design document.|15|[GA entry]
-1st Optional Requirement Extra credit.|10|[GA entry]
-2nd Optional Requirement Extra credit.|10|[GA entry]
-3rd and 4th Optional Requirement Extra credit.|10|[GA entry]
-**Total**|150|[GA entry]
+In general, a view-controller architecture is implemented, split between the `GameEngine` and `GameFrame` classes and components. The `GameEngine` triggers changes in the game view, which is managed by the `GameFrame`. Score and other static displays are produced using `Overlay`s.
+
+The `GameObject` component is the base class for all moving objects in the game. The `Player` and `Alien` objects dictate those components' behavior. Each object has a `Physics` engine to calculate new positions from step to step.
+
+The code is fully documented with javadoc annotations, which can be generated with the Maven plugin.
+
+See the `star-skirmish` directory for instructions on using Maven to build the application and `.jar` yourself.
