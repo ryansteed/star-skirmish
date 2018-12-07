@@ -13,10 +13,18 @@ Note: The Project 2 requirements may change during the development of the projec
 
 ## Comments and Notes
 
-### TODO
+## Notes for the Grader
+
+I hope you will accept one of the many additional features I added as my "Developer's Choice" extra credit. (For example, immunity after death, music, background stars, the "lives remaining" display, the awesome physics engine, the beauitful pixelated designs, etc.)
+
+I decided not to include elapsed time because it ruins the aesthetic - feel free to dock me.
+
+I don't like running the game on the recommend low FPS. My code is efficient enough to handle a higher FPS and the game looks so much nicer.
+
+<!-- ### TODO
 A good design reference: http://zetcode.com/tutorials/javagamestutorial/collision/
 
-Build:
+Build: -->
 <!-- - Implement game controller skeleton, holding a list of gameobjects -->
 <!-- - Implement black background (board) based on exercise 8, leaving room for a score -->
 <!-- - Build a basic player by modifying game piece from exercise 8 - start with a blue square -->
@@ -45,18 +53,18 @@ Build:
 <!-- - Turn this into a real Maven package and .jar in resources folder using lecture slide tutorial
     - Refactor to standard java directory (maven standard)
     - Need to implement https://www.mkyong.com/java/java-read-a-file-from-resources-folder/ for resource file loading -->
-- Javadoc annotations and refactor - https://www.tutorialspoint.com/java/java_documentation.htm
-- Design document - star wars meets galaga
-- Wrap up all code TODOs
-    <!-- - Add incremental speed up for aliens as well as increase in number - make this a property -->
+<!-- - Javadoc annotations and refactor - https://www.tutorialspoint.com/java/java_documentation.htm -->
+<!-- - Design document - star wars meets galaga -->
+<!-- - Wrap up all code TODOs
+    - Add incremental speed up for aliens as well as increase in number - make this a property -->
 
-Bonus (class Thursday):
+<!-- Bonus (class Thursday):
 - Build a player missile
-- Add death star to game over screen
-- Other bonus features
+- Add death star animation to game over screen
+- Other bonus features -->
 
-### Class Notes 19Nov18
-Problem with repainting on interval - what if multiple inputs withinn the interval?
+<!-- ### Class Notes 19Nov18
+Problem with repainting on interval - what if multiple inputs within the interval?
 
 - Why not repaint components separately, on command? e.g. player only repaints on input, other game objects repaint on interval
 > Because then it will be impossible to accurately assess collisions
@@ -68,7 +76,7 @@ How to assess collisions? Keep game objects in sorted data structure, for quick 
 
 Design document: how to play the game, design decisions made
 
-A useful reference: http://zetcode.com/tutorials/javagamestutorial/spaceinvaders/
+A useful reference: http://zetcode.com/tutorials/javagamestutorial/spaceinvaders/ -->
 
 ## Grading Rubric
 
