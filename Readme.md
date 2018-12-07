@@ -9,6 +9,7 @@ Developer Hours: 29
 ## Controls
 
 Move the player:
+
 |   | ↑ |   |
 |---|---|---|
 | ← |   | → |
