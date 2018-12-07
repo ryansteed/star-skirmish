@@ -121,17 +121,21 @@ abstract class Painter {
         if (colorOverride == null) {
             Color color = Color.white;
             switch (c) {
-            case 'b':
-                color = Color.darkGray;
-                break;
-            case 'r':
-                color = Color.red;
-                break;
-            case 'g':
-                color = Color.gray;
-                break;
-            case 'l':
-                color = Color.blue;
+                case 'b':
+                    color = Color.darkGray;
+                    break;
+                case 'r':
+                    color = Color.red;
+                    break;
+                case 'g':
+                    color = Color.gray;
+                    break;
+                case 'l':
+                    color = Color.blue;
+                    break;
+                case 'o':
+                    color = Color.orange;
+                    break;
             }
             return color;
         }
@@ -249,6 +253,28 @@ class StarPainter extends Painter {
             { 'w', 'g', 'e', 'e'},
             { 'g', 'e', 'e', 'e'},
             { 'b', 'e', 'e', 'e'},
+        };
+        return design;
+    }
+}
+
+class MissilePainter extends Painter {
+    public MissilePainter() {
+        super(3,10);
+    }
+    
+    protected char[][] getDesign() {
+        char[][] design = { 
+            { 'r', 'e'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'o', 'r'},
+            { 'r', 'e'},
         };
         return design;
     }

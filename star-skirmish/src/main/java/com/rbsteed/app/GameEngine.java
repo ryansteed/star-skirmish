@@ -177,6 +177,10 @@ public class GameEngine {
                 activeObjects.addAll(currentWave.aliens);
             }
             activeObjects.addAll(stars);
+            // for (Missile missile : player.missiles) {
+            //     System.out.println(missile);
+            // }
+            activeObjects.addAll(player.missiles);
             frame.update(activeObjects, score, player.lives);
         }
         
@@ -187,9 +191,22 @@ public class GameEngine {
         private void checkCollisions() {
             Iterator<Alien> iter = currentWave.iterAliens();
             while (iter.hasNext()) {
-                if (iter.next().intersects(player)) {
+                Alien current = iter.next();
+                if (current.intersects(player)) {
                     iter.remove();
                     player.takeLife();
+                }
+                else {
+                    boolean isDead = false;
+                    Iterator<Player.Missile> missileIter = player.iterMissiles();
+                    while (missileIter.hasNext()) {
+                        if (missileIter.next().intersects(current)) {
+                            missileIter.remove();
+                            isDead = current.hit(player.lives);
+                        }
+                    }
+                    // do this outside the loop to avoid race condition
+                    if (isDead) iter.remove();
                 }
             }
             if (player.isDead()) {

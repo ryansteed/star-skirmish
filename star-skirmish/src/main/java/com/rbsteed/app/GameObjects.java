@@ -8,6 +8,8 @@ package com.rbsteed.app;
 
 import java.util.Properties;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.Area;
@@ -19,6 +21,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.KeyStroke;
 import java.awt.Color;
 
@@ -35,6 +38,8 @@ abstract class GameObject extends JComponent {
     protected Physics engine;
     protected Area boundary;
     protected Painter painter;
+
+    Sound deathSound;
     
     /**
      * Set the initial object conditions, including size, physics, and location.
@@ -54,6 +59,8 @@ abstract class GameObject extends JComponent {
         setSize(hitbox);
         setLocation(init.x, init.y);
         // setBorder(BorderFactory.createLineBorder(Color.green));
+
+        deathSound = new Sound("death.wav");
     }
 
     /**
@@ -151,6 +158,10 @@ class Player extends GameObject {
     private Dimension originalSize;
     static int sizeInc = 30;
     private boolean immune;
+    private Properties prop;
+
+    protected ArrayList<Missile> missiles;
+    private int fireRate;
 
     /**
      * Register movement actions for this player, and set initial object conditions.
@@ -164,10 +175,15 @@ class Player extends GameObject {
      */
     Player(Euclidean init, Dimension hitbox, Area boundary, int maxAccel, Properties prop) {
         super(init, hitbox, Integer.valueOf(prop.getProperty("pspeed")), boundary);
+        this.prop = prop;
         originalSize = hitbox;
-        registerMoveActions(maxAccel);
-        painter = new ShipPainter();
         immune = false;
+        //TODO: make this a parameter
+        fireRate = 500;
+        painter = new ShipPainter();
+        missiles = new ArrayList<Missile>();
+        
+        registerMoveActions(maxAccel);
     }
 
     /**
@@ -196,6 +212,43 @@ class Player extends GameObject {
         this.getActionMap().put("rRight", new EnableAction(moveRight));
         this.getActionMap().put("rUp", new EnableAction(moveUp));
         this.getActionMap().put("rDown", new EnableAction(moveDown));
+
+        Timer fireTimer = new Timer(fireRate, new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fire();
+            }
+        });
+        fireTimer.setInitialDelay(0);
+
+        AbstractAction fire = new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setEnabled(false);
+                fireTimer.start();
+            }
+        };
+
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, 0, false), "fire");
+        this.getActionMap().put("fire", fire);
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F, 0, true), "rFire");
+        this.getActionMap().put("rFire", new AbstractAction() {
+            static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Timer enableTimer = new Timer(fireRate, new AbstractAction() {
+                    static final long serialVersionUID = 1L;
+                    public void actionPerformed(ActionEvent e) {
+                        fire.setEnabled(true);
+                    }
+                });
+                enableTimer.setRepeats(false);
+                enableTimer.start();
+                fireTimer.stop();
+            }
+        });
     }
     /**
      * A special action for causing the player to move with a certain acceleration.
@@ -239,6 +292,8 @@ class Player extends GameObject {
             // System.out.println("Enabled move on release");
         }
     }
+
+
     /**
      * Reset the player for a new game
      * @param lives The number of lives with which the player starts.
@@ -289,7 +344,6 @@ class Player extends GameObject {
                 immunity.start();
             }
             // https://bigsoundbank.com/detail-0477-wilhelm-scream.html
-            Sound deathSound = new Sound("death.wav");
             deathSound.play();
         }
     }
@@ -302,6 +356,40 @@ class Player extends GameObject {
     protected boolean isDead() {
         return lives <= 0;
     }
+
+    protected void fire() {
+        Sound fireSound = new Sound("fire.wav");
+        fireSound.play();
+
+        Dimension size = new Dimension((int) hitbox.getWidth() / 10, (int) hitbox.getHeight() / 2);
+        Euclidean initLeft = new Euclidean(engine.getX(), engine.getY());
+        Euclidean initRight = new Euclidean(engine.getX() + (int) (hitbox.getWidth() - size.getWidth()), engine.getY());
+        Area missileBoundary = new Area(new Rectangle((int) (boundary.getBounds().getWidth() + size.getWidth() * 2),
+                (int) (boundary.getBounds().getHeight() + size.getHeight() * 2)));
+        //TODO: make this a property                
+        int missileSpeed = Integer.valueOf(prop.getProperty("missilespeed")) - engine.v.y;
+        missiles.add(new Missile(initLeft, size, missileSpeed, missileBoundary)); 
+        missiles.add(new Missile(initRight, size, missileSpeed, missileBoundary));
+    }
+
+    protected Iterator<Missile> iterMissiles() {
+        return missiles.iterator();
+    }
+    
+    class Missile extends GameObject {
+        static final long serialVersionUID = 1L;
+
+        Missile(Euclidean init, Dimension hitbox, int speed, Area boundary) {
+            super(init, hitbox, speed, boundary);
+            engine.v.y = -speed < -Integer.valueOf(prop.getProperty("missilespeed")) ? -speed : -Integer.valueOf(prop.getProperty("missilespeed"));
+            painter = new MissilePainter();
+        }
+
+        @Override
+        protected void handleOutOfBounds(Euclidean newPos) {
+            missiles.remove(this);
+        }
+    }
 }
 
 /**
@@ -310,6 +398,7 @@ class Player extends GameObject {
 class Alien extends GameObject {
     static final long serialVersionUID = 1L;
     protected int value;
+    private int livesRemaining;
 
     /**
      * Creates the alien with a special painter and sets a vertical velocity based on
@@ -322,8 +411,34 @@ class Alien extends GameObject {
     Alien(Euclidean init, int tier, int baseSpeed, Properties prop) {
         super(init, new Dimension(Wave.tiers[tier], Wave.tiers[tier]), Integer.valueOf(prop.getProperty("aspeed"+tier)), null);
         this.value = Integer.valueOf(prop.getProperty("apoints"+tier));
+        this.livesRemaining = tier;
         engine.v.y = speed + baseSpeed;
         painter = new AlienPainter();
+    }
+
+    /**
+     * Hit the alien with a missile, turning it green for a period.
+     * @param strength The strength of the missile.
+     * @return Whether or not the alien is now dead.
+     */
+    protected boolean hit(int strength) {
+        painter.setColor(Color.green);
+        ActionListener recolor = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                painter.setColor(null);
+            }
+        };
+        Timer recolorTimer = new Timer(500, recolor);
+        recolorTimer.setRepeats(false);
+        recolorTimer.start();
+
+        livesRemaining -= strength;
+        if (livesRemaining < 0) {
+            deathSound.play();
+            return true;
+        }
+        return false;
     }
 }
 

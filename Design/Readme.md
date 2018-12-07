@@ -1,5 +1,11 @@
 # Star Skirmish V1.0 Design Document
 
+Author: Ryan Steed
+
+Release: 12-06-2018
+
+Developer Hours: 25
+
 ## Controls
 
 Move the player:

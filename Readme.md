@@ -17,9 +17,9 @@ Note: The Project 2 requirements may change during the development of the projec
 
 I hope you will accept one of the many additional features I added as my "Developer's Choice" extra credit. (For example, immunity after death, music, background stars, the "lives remaining" display, the awesome physics engine, the beauitful pixelated designs, etc.)
 
-I decided not to include elapsed time because it ruins the aesthetic - feel free to dock me.
+I decided not to include elapsed time because it ruins the aesthetic, and I only included one top highscore because I didn't want to pollute the end screen with additional scores when this will likely be distributed as a game with only one individual user - feel free to dock me.
 
-I don't like running the game on the recommend low FPS. My code is efficient enough to handle a higher FPS and the game looks so much nicer.
+I also don't like running the game on the recommended low FPS. My code is efficient enough to handle a higher FPS and the game looks so much nicer. My default is 50.
 
 <!-- ### TODO
 A good design reference: http://zetcode.com/tutorials/javagamestutorial/collision/
